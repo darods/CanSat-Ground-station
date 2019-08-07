@@ -1,0 +1,4 @@
+Wheel-Version: 1.0
+Generator: rbtools 0.42.0
+Root-Is-Purelib: false
+Tag: cp35.cp36.cp37.cp38-abi3-manylinux1_x86_64
