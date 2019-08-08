@@ -3,6 +3,7 @@
 from numpy import *
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
+import numpy as np
 import serial
 
 # Create object serial port
@@ -18,9 +19,9 @@ app = QtGui.QApplication([])
 win = pg.GraphicsWindow(title="Signal from serial port")  # creates a window
 # creates empty space for the plot in the window
 p = win.addPlot(title="Realtime plot")
-curve = p.plot()                        # create an empty "plot" (a curve to plot)
+curve = p.plot()                     # create an empty "plot" (a curve to plot)
 
-windowWidth = 500                       # width of the window displaying the curve
+windowWidth = 500                    # width of the window displaying the curve
 # create array that will contain the relevant time series
 Xm = linspace(0, 0, windowWidth)
 ptr = -windowWidth                      # set first x position
@@ -47,5 +48,5 @@ while True:
     update()
 
 ### END QtApp ####
-pg.QtGui.QApplication.exec_()  # you MUST put this at the end
+app.exec_()  # you MUST put this at the end
 ##################
