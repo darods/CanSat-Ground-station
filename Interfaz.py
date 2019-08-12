@@ -38,19 +38,20 @@ l1.addLabel(
 l1.nextRow()
 p1 = l1.addPlot(title="Altura")
 CurvaAltura = p1.plot()
+
 # Graficos de tiempo, altura, caida y bateria
 l2 = Grafico.addLayout(colspan=1, border=(50, 0, 0))
 l2.setContentsMargins(10, 10, 10, 10)
 l2.addLabel(
     "Sub-layout: this layout demonstrates the use of shared axes and axis labels", colspan=2)
 l2.nextRow()
-p2 = l2.addPlot(title="Plot 2", rowspan=2)
+p2 = l2.addPlot(title="Altura", rowspan=2)
 vb = l2.addViewBox(lockAspect=True)
 img = pg.ImageItem(np.random.normal(size=(100, 100)))
 vb.addItem(img)
 vb.autoRange()
 l2.nextRow()
-p6 = l2.addPlot()
+GrafBateria = l2.addPlot(title="bateria")
 
 # Siguiente fila
 Grafico.nextRow()
