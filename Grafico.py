@@ -35,7 +35,7 @@ windowWidth = 500                    # width of the window displaying the curve
 Xm = linspace(0, 0, windowWidth)
 ptr = -windowWidth                      # set first x position
 
-Xa = linspace(0, 0, windowWidth)
+Xa = linspace(0, 0)
 
 DatosAcelX = linspace(0, 0, windowWidth)
 DatosAcelY = linspace(0, 0, windowWidth)
