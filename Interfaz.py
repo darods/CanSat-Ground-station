@@ -18,6 +18,10 @@ view.show()
 view.setWindowTitle('Monitereo de vuelo')
 view.resize(800, 600)
 
+# Fuente para mostrar solo un numero
+font = QtGui.QFont()
+font.setPixelSize(40)
+
 # Title at top
 text = """
 Interfaz de monitroreo de vuelo para cansats y OBC's <br>
@@ -46,6 +50,10 @@ l2.addLabel(
     "Sub-layout: this layout demonstrates the use of shared axes and axis labels", colspan=2)
 l2.nextRow()
 p2 = l2.addPlot(title="Altura", rowspan=2)
+textoAltura = pg.TextItem("test", anchor=(1, 1))
+textoAltura.setFont(font)
+p2.addItem(textoAltura)
+
 vb = l2.addViewBox(lockAspect=True)
 img = pg.ImageItem(np.random.normal(size=(100, 100)))
 vb.addItem(img)
@@ -117,6 +125,7 @@ def update():
     # curve.setPos(ptr, 0)                   # set x position in the graph to 0
 
     CurvaAltura.setData(Xa)                     # set the curve with this data
+    textoAltura.setText(str(valor[1]))
     '''
     curvaAcelX.setData(DatosAcelX)
     curvaAcelY.setData(DatosAcelY)
