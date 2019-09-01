@@ -20,7 +20,7 @@ view.resize(800, 600)
 
 # Fuente para mostrar solo un numero
 font = QtGui.QFont()
-font.setPixelSize(40)
+font.setPixelSize(120)
 
 # Title at top
 text = """
@@ -50,7 +50,9 @@ l2.addLabel(
     "Sub-layout: this layout demonstrates the use of shared axes and axis labels", colspan=2)
 l2.nextRow()
 p2 = l2.addPlot(title="Altura", rowspan=2)
-textoAltura = pg.TextItem("test", anchor=(1, 1))
+p2.hideAxis('bottom')
+p2.hideAxis('left')
+textoAltura = pg.TextItem("test", anchor=(0.5, 0.5))
 textoAltura.setFont(font)
 p2.addItem(textoAltura)
 
@@ -88,7 +90,7 @@ p6 = l4.addPlot()
 
 # show some content in the plots
 # p1.plot([1, 3, 2, 4, 3, 5])
-p2.plot([1, 3, 2, 4, 3, 5])
+# p2.plot([1, 3, 2, 4, 3, 5])
 p4.plot([1, 3, 2, 4, 3, 5])
 p5.plot([1, 3, 2, 4, 3, 5])
 
