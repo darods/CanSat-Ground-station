@@ -5,7 +5,7 @@ from numpy import *
 import serial
 
 # Variables del puerto serial
-portName = '/dev/ttyACM0'
+portName = '/dev/ttyUSB0'
 baudrate = 9600
 ser = serial.Serial(portName, baudrate)
 
