@@ -41,6 +41,7 @@ Grafico.addLabel('LIDER - Universidad Distrital', angle=-90, rowspan=3)
 l1 = Grafico.addLayout(colspan=1, border=(50, 0, 0))
 l1.setContentsMargins(10, 10, 10, 10)
 p1 = l1.addPlot(title="Altura")
+p1.hideAxis('bottom')
 CurvaAltura = p1.plot()
 
 # Graficos de tiempo, altura, caida y bateria
@@ -78,14 +79,20 @@ l3.setContentsMargins(10, 10, 10, 10)
 
 l3.addLabel('Vertical Axis Label', angle=-90, rowspan=2)
 GrafAcel = l3.addPlot(title="Aceleraciones")
-curvaAcelX = GrafAcel.plot(pen="r")
-curvaAcelY = GrafAcel.plot(pen="g")
-curvaAcelZ = GrafAcel.plot(pen="b")
+# añadiendo leyenda
+GrafAcel.addLegend()
+GrafAcel.hideAxis('bottom')
+curvaAcelX = GrafAcel.plot(pen="r", name="AcelX")
+curvaAcelY = GrafAcel.plot(pen="g", name="AcelY")
+curvaAcelZ = GrafAcel.plot(pen="b", name="AcelX")
 
 GrafEuler = l3.addPlot(title="Angulos Euler")
-curvaPitch = GrafEuler.plot(pen="r")
-curvaRoll = GrafEuler.plot(pen="g")
-curvaYaw = GrafEuler.plot(pen="b")
+GrafEuler.hideAxis('bottom')
+# añadiendo leyenda
+GrafEuler.addLegend()
+curvaPitch = GrafEuler.plot(pen="r", name="Pitch")
+curvaRoll = GrafEuler.plot(pen="g", name="Roll")
+curvaYaw = GrafEuler.plot(pen="b", name="Yaw")
 
 # Graficos de valocidad, temperatura y presion
 l4 = Grafico.addLayout(colspan=1, border=(50, 0, 0))
