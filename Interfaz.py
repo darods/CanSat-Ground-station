@@ -9,6 +9,8 @@ portName = '/dev/ttyUSB0'
 baudrate = 9600
 ser = serial.Serial(portName, baudrate)
 
+pg.setConfigOption('background', (227, 229, 219))
+pg.setConfigOption('foreground', 'k')
 # Variables de la interfaz
 app = QtGui.QApplication([])
 view = pg.GraphicsView()
@@ -18,9 +20,11 @@ view.show()
 view.setWindowTitle('Monitereo de vuelo')
 view.resize(800, 600)
 
+
 # Fuente para mostrar solo un numero
 font = QtGui.QFont()
 font.setPixelSize(120)
+
 font2 = QtGui.QFont()
 font2.setPixelSize(90)
 
@@ -42,7 +46,7 @@ l1 = Grafico.addLayout(colspan=1, border=(50, 0, 0))
 l1.setContentsMargins(10, 10, 10, 10)
 p1 = l1.addPlot(title="Altura")
 p1.hideAxis('bottom')
-CurvaAltura = p1.plot()
+CurvaAltura = p1.plot(pen="r")
 
 # Graficos de tiempo, altura, caida y bateria
 l2 = Grafico.addLayout(colspan=1, border=(50, 0, 0))
@@ -51,14 +55,14 @@ l2.setContentsMargins(10, 10, 10, 10)
 GrafAltura = l2.addPlot(title="Altura", rowspan=2)
 GrafAltura.hideAxis('bottom')
 GrafAltura.hideAxis('left')
-textoAltura = pg.TextItem("test", anchor=(0.5, 0.5))
+textoAltura = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
 textoAltura.setFont(font)
 GrafAltura.addItem(textoAltura)
 # Grafico del tiempo
 GrafTiempo = l2.addPlot(title="Tiempo")
 GrafTiempo.hideAxis('bottom')
 GrafTiempo.hideAxis('left')
-textoTiempo = pg.TextItem("test", anchor=(0.5, 0.5))
+textoTiempo = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
 textoTiempo.setFont(font2)
 GrafTiempo.addItem(textoTiempo)
 l2.nextRow()
@@ -66,7 +70,7 @@ l2.nextRow()
 GrafBateria = l2.addPlot(title="bateria")
 GrafBateria.hideAxis('bottom')
 GrafBateria.hideAxis('left')
-textoBateria = pg.TextItem("test", anchor=(0.5, 0.5))
+textoBateria = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
 textoBateria.setFont(font2)
 GrafBateria.addItem(textoBateria)
 
@@ -101,14 +105,14 @@ l4.setContentsMargins(10, 10, 10, 10)
 GrafVel = l4.addPlot(title="Velocidad", rowspan=2)
 GrafVel.hideAxis('bottom')
 GrafVel.hideAxis('left')
-textoVel = pg.TextItem("test", anchor=(0.5, 0.5))
+textoVel = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
 textoVel.setFont(font)
 GrafVel.addItem(textoVel)
 
 GrafTemp = l4.addPlot(title="Temperatura")
 GrafTemp.hideAxis('bottom')
 GrafTemp.hideAxis('left')
-textoTemp = pg.TextItem("test", anchor=(0.5, 0.5))
+textoTemp = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
 textoTemp.setFont(font2)
 GrafTemp.addItem(textoTemp)
 
@@ -116,7 +120,7 @@ l4.nextRow()
 GrafPress = l4.addPlot(title="Presion")
 GrafPress.hideAxis('bottom')
 GrafPress.hideAxis('left')
-textoPress = pg.TextItem("test", anchor=(0.5, 0.5))
+textoPress = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
 textoPress.setFont(font2)
 GrafPress.addItem(textoPress)
 
