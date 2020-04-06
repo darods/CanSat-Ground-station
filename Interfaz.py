@@ -3,11 +3,13 @@ import pyqtgraph as pg
 import numpy as np
 from numpy import *
 import serial
+import sys
+from comunicacion import Comunicacion
 
-# Variables del puerto serial
-portName = '/dev/ttyUSB0'
-baudrate = 9600
-ser = serial.Serial(portName, baudrate)
+Bandera = True
+
+ser = Comunicacion().ser
+
 
 pg.setConfigOption('background', (227, 229, 219))
 pg.setConfigOption('foreground', 'k')
@@ -142,63 +144,69 @@ DatosYaw = linspace(0, 0)
 
 
 def update():
-    global curve, ptr, Xm
-    # shift data in the temporal mean 1 sample left
-    # Xm[:-1] = Xm[1:]
-    Xa[:-1] = Xa[1:]
-    DatosAcelX[:-1] = DatosAcelX[1:]
-    DatosAcelY[:-1] = DatosAcelY[1:]
-    DatosAcelZ[:-1] = DatosAcelZ[1:]
-    DatosPitch[:-1] = DatosPitch[1:]
-    DatosRoll[:-1] = DatosRoll[1:]
-    DatosYaw[:-1] = DatosYaw[1:]
+    try:
+        global curve, ptr, Xm
+        # shift data in the temporal mean 1 sample left
+        # Xm[:-1] = Xm[1:]
+        Xa[:-1] = Xa[1:]
+        DatosAcelX[:-1] = DatosAcelX[1:]
+        DatosAcelY[:-1] = DatosAcelY[1:]
+        DatosAcelZ[:-1] = DatosAcelZ[1:]
+        DatosPitch[:-1] = DatosPitch[1:]
+        DatosRoll[:-1] = DatosRoll[1:]
+        DatosYaw[:-1] = DatosYaw[1:]
 
-    value = ser.readline()  # read line (single value) from the serial port
-    decoded_bytes = str(value[0:len(value) - 2].decode("utf-8"))
-    print(decoded_bytes)
-    valor = decoded_bytes.split(",")
-    # print(int(valor[0]))
-    # vector containing the instantaneous values
-    # Xm[-1] = int(valor[0])
-    Xa[-1] = float(valor[1])
+        value = ser.readline()  # read line (single value) from the serial port
+        decoded_bytes = str(value[0:len(value) - 2].decode("utf-8"))
+        print(decoded_bytes)
+        valor = decoded_bytes.split(",")
+        # print(int(valor[0]))
+        # vector containing the instantaneous values
+        # Xm[-1] = int(valor[0])
+        Xa[-1] = float(valor[1])
 
-    DatosAcelX[-1] = float(valor[8])
-    DatosAcelY[-1] = float(valor[9])
-    DatosAcelZ[-1] = float(valor[10])
+        DatosAcelX[-1] = float(valor[8])
+        DatosAcelY[-1] = float(valor[9])
+        DatosAcelZ[-1] = float(valor[10])
 
-    DatosPitch[-1] = float(valor[5])
-    DatosRoll[-1] = float(valor[6])
-    DatosYaw[-1] = float(valor[7])
+        DatosPitch[-1] = float(valor[5])
+        DatosRoll[-1] = float(valor[6])
+        DatosYaw[-1] = float(valor[7])
 
-    # ptr += 1  # update x position for displaying the curve
-    # curve.setData(Xm)                     # set the curve with this data
-    # curve.setPos(ptr, 0)                   # set x position in the graph to 0
+        # ptr += 1  # update x position for displaying the curve
+        # curve.setData(Xm)                     # set the curve with this data
+        # curve.setPos(ptr, 0)                   # set x position in the graph to 0
 
-    CurvaAltura.setData(Xa)                     # set the curve with this data
-    textoAltura.setText(str(valor[1]))
+        # set the curve with this data
+        CurvaAltura.setData(Xa)
+        textoAltura.setText(str(valor[1]))
 
-    curvaAcelX.setData(DatosAcelX)
-    curvaAcelY.setData(DatosAcelY)
-    curvaAcelZ.setData(DatosAcelZ)
+        curvaAcelX.setData(DatosAcelX)
+        curvaAcelY.setData(DatosAcelY)
+        curvaAcelZ.setData(DatosAcelZ)
 
-    curvaPitch.setData(DatosPitch)
-    curvaRoll.setData(DatosRoll)
-    curvaYaw.setData(DatosYaw)
+        curvaPitch.setData(DatosPitch)
+        curvaRoll.setData(DatosRoll)
+        curvaYaw.setData(DatosYaw)
 
-    textoTemp.setText(str(valor[3]))
-    textoPress.setText(str(valor[4]))
+        textoTemp.setText(str(valor[3]))
+        textoPress.setText(str(valor[4]))
 
-    QtGui.QApplication.processEvents()    # you MUST process the plot now
+        QtGui.QApplication.processEvents()    # you MUST process the plot now
+    except NameError:
+        print("no esta definido ser")
+        Bandera = False
+        sys.exit(0)
 
 
-Bandera = True
-while Bandera:
+# poner comentario al ciclo para poder editar sin los circuitos
+
+while Bandera != False:
     update()
-
 
 # Start Qt event loop unless running in interactive mode.
 if __name__ == '__main__':
     import sys
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
-        Bandera = False
+        # Bandera = False
