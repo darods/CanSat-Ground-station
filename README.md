@@ -3,7 +3,7 @@ Código para una estación terrena donde se visualizan distintos datos de sensor
 
 Tiene como proposito el hacer comprensibles los datos que son transmitidos por una OBC (On board computer) o un CanSat por medio de una cadena de texto en un puerto serial.
 
-![imagen](Interfaz_Blanca.png)
+![imagen](Imagenes/Interfaz_Blanca.png)
 
 Sigue en desarrollo. El archivo que conteiene el código es "Interfaz.py"
 
