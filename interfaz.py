@@ -1,14 +1,9 @@
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
-from numpy import *
 import serial
 import sys
 from comunicacion import Comunicacion
-
-Bandera = True
-
-ser = Comunicacion().ser
 
 
 pg.setConfigOption('background', (227, 229, 219))
@@ -22,6 +17,7 @@ view.show()
 view.setWindowTitle('Monitereo de vuelo')
 view.resize(800, 600)
 
+ser = Comunicacion()
 
 # Fuente para mostrar solo un numero
 font = QtGui.QFont()
@@ -47,8 +43,11 @@ Grafico.addLabel('LIDER - Universidad Distrital', angle=-90, rowspan=3)
 l1 = Grafico.addLayout(colspan=1, border=(50, 0, 0))
 l1.setContentsMargins(10, 10, 10, 10)
 p1 = l1.addPlot(title="Altura")
-p1.hideAxis('bottom')
-CurvaAltura = p1.plot(pen="r")
+# p1.hideAxis('bottom')
+curva_altura = p1.plot(pen="r")
+datos_altura = np.linspace(0, 0, 30)
+ptr1 = 0
+
 
 # Graficos de tiempo, altura, caida y bateria
 l2 = Grafico.addLayout(colspan=1, border=(50, 0, 0))
@@ -60,6 +59,20 @@ GrafAltura.hideAxis('left')
 textoAltura = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
 textoAltura.setFont(font)
 GrafAltura.addItem(textoAltura)
+
+
+def update_altura(valor):
+    global curva_altura, datos_altura,  ptr1
+    datos_altura[:-1] = datos_altura[1:]
+    #valor = ser.getData()
+    datos_altura[-1] = float(valor[1])
+    ptr1 += 1
+    curva_altura.setData(datos_altura)
+    curva_altura.setPos(ptr1, 0)
+    textoAltura.setText('')
+    textoAltura.setText(str(ptr1))
+
+
 # Grafico del tiempo
 GrafTiempo = l2.addPlot(title="Tiempo")
 GrafTiempo.hideAxis('bottom')
@@ -67,6 +80,13 @@ GrafTiempo.hideAxis('left')
 textoTiempo = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
 textoTiempo.setFont(font2)
 GrafTiempo.addItem(textoTiempo)
+
+
+def update_tiempo(valor):
+    textoTiempo.setText('')
+    textoTiempo.setText(str(valor[0]))
+
+
 l2.nextRow()
 # Grafico de la batería
 GrafBateria = l2.addPlot(title="bateria")
@@ -75,6 +95,11 @@ GrafBateria.hideAxis('left')
 textoBateria = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
 textoBateria.setFont(font2)
 GrafBateria.addItem(textoBateria)
+
+
+def update_bateria(valor):
+    pass
+
 
 # Siguiente fila
 Grafico.nextRow()
@@ -92,6 +117,32 @@ curvaAcelX = GrafAcel.plot(pen="r", name="AcelX")
 curvaAcelY = GrafAcel.plot(pen="g", name="AcelY")
 curvaAcelZ = GrafAcel.plot(pen="b", name="AcelX")
 
+DatosAcelX = np.linspace(0, 0)
+DatosAcelY = np.linspace(0, 0)
+DatosAcelZ = np.linspace(0, 0)
+ptr2 = 0
+
+
+def update_acc(valor):
+    global curvaAcelX, curvaAcelY, curvaAcelZ, DatosAcelX, DatosAcelY, DatosAcelZ, ptr2
+    DatosAcelX[:-1] = DatosAcelX[1:]
+    DatosAcelY[:-1] = DatosAcelY[1:]
+    DatosAcelZ[:-1] = DatosAcelZ[1:]
+
+    DatosAcelX[-1] = float(valor[8])
+    DatosAcelY[-1] = float(valor[9])
+    DatosAcelZ[-1] = float(valor[10])
+    ptr2 += 1
+
+    curvaAcelX.setData(DatosAcelX)
+    curvaAcelY.setData(DatosAcelY)
+    curvaAcelZ.setData(DatosAcelZ)
+
+    curvaAcelX.setPos(ptr2, 0)
+    curvaAcelY.setPos(ptr2, 0)
+    curvaAcelZ.setPos(ptr2, 0)
+
+
 GrafEuler = l3.addPlot(title="Angulos Euler")
 GrafEuler.hideAxis('bottom')
 # añadiendo leyenda
@@ -99,6 +150,33 @@ GrafEuler.addLegend()
 curvaPitch = GrafEuler.plot(pen="r", name="Pitch")
 curvaRoll = GrafEuler.plot(pen="g", name="Roll")
 curvaYaw = GrafEuler.plot(pen="b", name="Yaw")
+
+DatosPitch = np.linspace(0, 0)
+DatosRoll = np.linspace(0, 0)
+DatosYaw = np.linspace(0, 0)
+ptr3 = 0
+
+
+def update_gyro(valor):
+    global curvaPitch, curvaRoll, curvaYaw, DatosPitch, DatosRoll, DatosYaw, ptr3
+    DatosPitch[:-1] = DatosPitch[1:]
+    DatosRoll[:-1] = DatosRoll[1:]
+    DatosYaw[:-1] = DatosYaw[1:]
+
+    DatosPitch[-1] = float(valor[5])
+    DatosRoll[-1] = float(valor[6])
+    DatosYaw[-1] = float(valor[7])
+
+    ptr3 += 1
+
+    curvaPitch.setData(DatosPitch)
+    curvaRoll.setData(DatosRoll)
+    curvaYaw.setData(DatosYaw)
+
+    curvaPitch.setPos(ptr3, 0)
+    curvaRoll.setPos(ptr3, 0)
+    curvaYaw.setPos(ptr3, 0)
+
 
 # Graficos de valocidad, temperatura y presion
 l4 = Grafico.addLayout(colspan=1, border=(50, 0, 0))
@@ -126,87 +204,27 @@ textoPress = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
 textoPress.setFont(font2)
 GrafPress.addItem(textoPress)
 
-# show some content in the plots
-# p1.plot([1, 3, 2, 4, 3, 5])
-# GrafAltura.plot([1, 3, 2, 4, 3, 5])
-
-# Creando los arreglos que guardan los puntos de los graficos
-Xa = linspace(0, 0)
-DatosAcelX = linspace(0, 0)
-DatosAcelY = linspace(0, 0)
-DatosAcelZ = linspace(0, 0)
-
-DatosPitch = linspace(0, 0)
-DatosRoll = linspace(0, 0)
-DatosYaw = linspace(0, 0)
-# Realtime data plot. Each time this function is called,
-# the data display is updated
-
 
 def update():
-    try:
-        global curve, ptr, Xm
-        # shift data in the temporal mean 1 sample left
-        # Xm[:-1] = Xm[1:]
-        Xa[:-1] = Xa[1:]
-        DatosAcelX[:-1] = DatosAcelX[1:]
-        DatosAcelY[:-1] = DatosAcelY[1:]
-        DatosAcelZ[:-1] = DatosAcelZ[1:]
-        DatosPitch[:-1] = DatosPitch[1:]
-        DatosRoll[:-1] = DatosRoll[1:]
-        DatosYaw[:-1] = DatosYaw[1:]
-
-        value = ser.readline()  # read line (single value) from the serial port
-        decoded_bytes = str(value[0:len(value) - 2].decode("utf-8"))
-        print(decoded_bytes)
-        valor = decoded_bytes.split(",")
-        # print(int(valor[0]))
-        # vector containing the instantaneous values
-        # Xm[-1] = int(valor[0])
-        Xa[-1] = float(valor[1])
-
-        DatosAcelX[-1] = float(valor[8])
-        DatosAcelY[-1] = float(valor[9])
-        DatosAcelZ[-1] = float(valor[10])
-
-        DatosPitch[-1] = float(valor[5])
-        DatosRoll[-1] = float(valor[6])
-        DatosYaw[-1] = float(valor[7])
-
-        # ptr += 1  # update x position for displaying the curve
-        # curve.setData(Xm)                     # set the curve with this data
-        # curve.setPos(ptr, 0)                   # set x position in the graph to 0
-
-        # set the curve with this data
-        CurvaAltura.setData(Xa)
-        textoAltura.setText(str(valor[1]))
-
-        curvaAcelX.setData(DatosAcelX)
-        curvaAcelY.setData(DatosAcelY)
-        curvaAcelZ.setData(DatosAcelZ)
-
-        curvaPitch.setData(DatosPitch)
-        curvaRoll.setData(DatosRoll)
-        curvaYaw.setData(DatosYaw)
-
-        textoTemp.setText(str(valor[3]))
-        textoPress.setText(str(valor[4]))
-
-        QtGui.QApplication.processEvents()    # you MUST process the plot now
-    except NameError:
-        print("no esta definido ser")
-        Bandera = False
-        sys.exit(0)
+    valor = []
+    valor = ser.getData()
+    update_altura(valor)
+    # update_texto_altura()
+    update_tiempo(valor)
+    update_acc(valor)
+    update_gyro(valor)
+    # desconozco si es necesario esto
+    # QtGui.QApplication.processEvents()
 
 
-# poner comentario al ciclo para poder editar sin los circuitos
-
-while Bandera != False:
-    update()
+timer = pg.QtCore.QTimer()
+timer.timeout.connect(update)
+timer.start(500)
 
 # Start Qt event loop unless running in interactive mode.
+
 if __name__ == '__main__':
+
     import sys
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
-        # Bandera = False
