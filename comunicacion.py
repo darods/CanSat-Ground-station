@@ -19,3 +19,16 @@ class Comunicacion:
             self.ser = serial.Serial(self.portName, self.baudrate)
         except serial.serialutil.SerialException:
             print("no se pudo abrir : ", self.portName)
+
+    def cerrar(self):
+        if(self.ser.isOpen()):
+            self.ser.close()
+        else:
+            print("ya esta cerrado")
+
+    def getData(self):
+        value = self.ser.readline()  # read line (single value) from the serial port
+        decoded_bytes = str(value[0:len(value) - 2].decode("utf-8"))
+        # print(decoded_bytes)
+        valor = decoded_bytes.split(",")
+        return valor
