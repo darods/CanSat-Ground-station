@@ -32,3 +32,6 @@ class Comunicacion:
         # print(decoded_bytes)
         valor = decoded_bytes.split(",")
         return valor
+
+    def isOpen(self):
+        return self.ser.isOpen()
