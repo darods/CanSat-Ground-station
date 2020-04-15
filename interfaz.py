@@ -1,8 +1,6 @@
 from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
-import serial
-import sys
 from comunicacion import Comunicacion
 
 
@@ -20,11 +18,9 @@ view.resize(800, 600)
 ser = Comunicacion()
 
 # Fuente para mostrar solo un numero
-font = QtGui.QFont()
-font.setPixelSize(120)
+font = QtGui.QFont('Arial', 120)
 
-font2 = QtGui.QFont()
-font2.setPixelSize(90)
+font2 = QtGui.QFont('Arial', 90)
 
 
 # Title at top
