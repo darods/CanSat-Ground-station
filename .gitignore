@@ -2,3 +2,4 @@
 environment/
 __pycache__/
 env/
+flight_data.csv
