@@ -3,6 +3,7 @@ import pyqtgraph as pg
 import numpy as np
 from comunicacion import Comunicacion
 import math
+from dataBase import db
 
 
 pg.setConfigOption('background', (227, 229, 219))
@@ -16,14 +17,13 @@ view.show()
 view.setWindowTitle('Monitereo de vuelo')
 view.resize(1200, 700)
 
+# se declara la clase que se comunica con el puerto serial
 ser = Comunicacion()
-
+# clase que guarda en un archivo csv
+db = db()
 # Fuentes para mostrar solo un numero
 font = QtGui.QFont()
-font.setPixelSize(120)
-
-font2 = QtGui.QFont()
-font2.setPixelSize(90)
+font.setPixelSize(90)
 
 
 # Title at top
@@ -43,7 +43,7 @@ Grafico.addLabel('LIDER - Semillero de investigación ATL',
 l1 = Grafico.addLayout(colspan=20, rowspan=2)
 l11 = l1.addLayout(rowspan=1, border=(0, 0, 0))
 # l1.setContentsMargins(10, 10, 10, 10)
-p1 = l11.addPlot(title="Altura")
+p1 = l11.addPlot(title="Altura (m)")
 # p1.hideAxis('bottom')
 curva_altura = p1.plot(pen="r")
 datos_altura = np.linspace(0, 0, 30)
@@ -61,7 +61,7 @@ def update_altura(valor):
 
 
 # grafico de la Velocidad
-p2 = l11.addPlot(title="Velocidad")
+p2 = l11.addPlot(title="Velocidad (m/s)")
 curva_vel = p2.plot(pen="b")
 datos_vel = np.linspace(0, 0, 30)
 ptr6 = 0
@@ -90,13 +90,13 @@ l1.nextRow()
 l12 = l1.addLayout(rowspan=1, border=(0, 0, 0))
 
 # Grafico de aceleraciones
-GrafAcel = l12.addPlot(title="Aceleraciones")
+GrafAcel = l12.addPlot(title="Aceleraciones (m/s²)")
 # añadiendo leyenda
 GrafAcel.addLegend()
 GrafAcel.hideAxis('bottom')
-curvaAcelX = GrafAcel.plot(pen="r", name="AcelX")
-curvaAcelY = GrafAcel.plot(pen="g", name="AcelY")
-curvaAcelZ = GrafAcel.plot(pen="b", name="AcelX")
+curvaAcelX = GrafAcel.plot(pen="r", name="X")
+curvaAcelY = GrafAcel.plot(pen="g", name="Y")
+curvaAcelZ = GrafAcel.plot(pen="b", name="Z")
 
 DatosAcelX = np.linspace(0, 0)
 DatosAcelY = np.linspace(0, 0)
@@ -125,7 +125,7 @@ def update_acc(valor):
 
 
 # Grafico del gyro
-GrafEuler = l12.addPlot(title="Angulos Euler")
+GrafEuler = l12.addPlot(title="Gyro")
 GrafEuler.hideAxis('bottom')
 # añadiendo leyenda
 GrafEuler.addLegend()
@@ -177,7 +177,7 @@ def update_presion(valor):
 
 
 # Grafico temperatura
-graf_temp = l12.addPlot(title="Temperatura")
+graf_temp = l12.addPlot(title="Temperatura (ºc)")
 curva_temp = graf_temp.plot(pen="r")
 datos_temp = np.linspace(0, 0, 30)
 ptr5 = 0
@@ -201,13 +201,13 @@ GrafTiempo = l2.addPlot(title="Tiempo (min)")
 GrafTiempo.hideAxis('bottom')
 GrafTiempo.hideAxis('left')
 textoTiempo = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
-textoTiempo.setFont(font2)
+textoTiempo.setFont(font)
 GrafTiempo.addItem(textoTiempo)
 
 
 def update_tiempo(valor):
+    global textoTiempo
     textoTiempo.setText('')
-    # print(round(int(valor[0]) / 60000, 2), int(valor[0]))
     tiempo = round(int(valor[0]) / 60000, 2)
     textoTiempo.setText(str(tiempo))
 
@@ -219,7 +219,7 @@ GrafBateria = l2.addPlot(title="bateria")
 GrafBateria.hideAxis('bottom')
 GrafBateria.hideAxis('left')
 textoBateria = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
-textoBateria.setFont(font2)
+textoBateria.setFont(font)
 GrafBateria.addItem(textoBateria)
 
 
@@ -233,24 +233,35 @@ graf_clibre = l2.addPlot(title="caida libre")
 graf_clibre.hideAxis('bottom')
 graf_clibre.hideAxis('left')
 text_clibre = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
-text_clibre.setFont(font2)
+text_clibre.setFont(font)
 graf_clibre.addItem(text_clibre)
 
 
 def update_clibre(valor):
-    pass
+    global text_clibre
+    text_clibre.setText('')
+    if(valor[2] == '0'):
+        text_clibre.setText('No')
+    else:
+        text_clibre.setText('Si')
 
 
 def update():
-    valor = []
-    valor = ser.getData()
-    update_altura(valor)
-    update_vel(valor)
-    update_tiempo(valor)
-    update_acc(valor)
-    update_gyro(valor)
-    update_presion(valor)
-    update_temp(valor)
+    try:
+        valor = []
+        valor = ser.getData()
+        update_altura(valor)
+        update_vel(valor)
+        update_tiempo(valor)
+        update_acc(valor)
+        update_gyro(valor)
+        update_presion(valor)
+        update_temp(valor)
+        update_clibre(valor)
+        db.guardar(valor)
+    except IndexError:
+        print('iniciando')
+
     # desconozco si es necesario esto
     # QtGui.QApplication.processEvents()
 
