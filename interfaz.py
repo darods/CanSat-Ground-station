@@ -2,6 +2,7 @@ from pyqtgraph.Qt import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
 from comunicacion import Comunicacion
+import math
 
 
 pg.setConfigOption('background', (227, 229, 219))
@@ -62,10 +63,31 @@ def update_altura(valor):
 # grafico de la Velocidad
 p2 = l11.addPlot(title="Velocidad")
 curva_vel = p2.plot(pen="b")
+datos_vel = np.linspace(0, 0, 30)
+ptr6 = 0
+vx = 0
+vy = 0
+vz = 0
+vel = 0
+
+
+def update_vel(valor):
+    global curva_vel, datos_vel, ptr6, vx, vy, vz, vel
+    # 500 es dt
+    vx += (float(valor[8]) - 12) * 500
+    vy += (float(valor[9]) - 12) * 500
+    vz += (float(valor[10]) - 12) * 500
+    sum = math.pow(vx, 2) + math.pow(vy, 2) + math.pow(vz, 2)
+    vel = math.sqrt(sum)
+    datos_vel[:-1] = datos_vel[1:]
+    datos_vel[-1] = vel
+    ptr6 += 1
+    curva_vel.setData(datos_vel)
+    curva_vel.setPos(ptr6, 0)
+
 
 l1.nextRow()
 l12 = l1.addLayout(rowspan=1, border=(0, 0, 0))
-
 
 # Grafico de aceleraciones
 GrafAcel = l12.addPlot(title="Aceleraciones")
@@ -223,6 +245,7 @@ def update():
     valor = []
     valor = ser.getData()
     update_altura(valor)
+    update_vel(valor)
     update_tiempo(valor)
     update_acc(valor)
     update_gyro(valor)
