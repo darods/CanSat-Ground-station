@@ -4,7 +4,7 @@ import numpy as np
 from comunicacion import Comunicacion
 import math
 from dataBase import db
-
+from PyQt5.QtWidgets import QPushButton
 
 pg.setConfigOption('background', (227, 229, 219))
 pg.setConfigOption('foreground', 'k')
@@ -36,8 +36,27 @@ Grafico.nextRow()
 
 # Put vertical label on left side
 Grafico.addLabel('LIDER - Semillero de investigación ATL',
-                 angle=-90, rowspan=2)
+                 angle=-90, rowspan=3)
 
+Grafico.nextRow()
+# botones de guardar datos
+lb = Grafico.addLayout(colspan=21)
+proxy = QtGui.QGraphicsProxyWidget()
+b_ini_guardar = QtGui.QPushButton('iniciar almacenamiento')
+b_ini_guardar.clicked.connect(db.iniciar)
+proxy.setWidget(b_ini_guardar)
+lb.addItem(proxy)
+lb.nextCol()
+
+
+proxy2 = QtGui.QGraphicsProxyWidget()
+b_fin_guardar = QtGui.QPushButton('detener almacenamiento')
+b_fin_guardar.clicked.connect(db.detener)
+proxy2.setWidget(b_fin_guardar)
+lb.addItem(proxy2)
+
+
+Grafico.nextRow()
 
 # Grafico de altitud
 l1 = Grafico.addLayout(colspan=20, rowspan=2)
