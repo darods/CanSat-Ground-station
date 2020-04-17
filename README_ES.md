@@ -5,10 +5,10 @@ Código de una estación terrestre donde se muestran los datos de diferentes sen
 
 ## Tabla de contenidos
 * [Apoyo](#support)
-* [Información general](#info general)
-* [Tecnologías](#tecnologías)
-* [Configuración](#configuración)
-* [¿Cómo funciona?](#cómo-trabaja?)
+* [Información general](#info-general)
+* [Liberias](#librerias)
+* [Configuración](#configuracion)
+* [¿Cómo funciona?](#como-funciona)
 * [Fuentes](#fuentes)
 * [Licencia](#licencia)
 
@@ -17,7 +17,7 @@ ___
 Si usaste este proyecto o aprendiste algo, por favor dale una estrella a este proyecto para seguir haciendo proyectos de código abierto.
 ___
 
-## Información general
+## Info general
 El propósito de este proyecto es hacer que los datos transmitidos por un OBC (ordenador de a bordo) o un CanSat sean comprensibles a primera vista a través de una cadena de texto en un puerto serie.
 
 El código está en español pero la lógica detrás es universal.
@@ -30,7 +30,7 @@ otro proyecto de [ciencia de cohetes y CanSat](https://github.com/el-NASA/POA). 
 
 * A veces no puede convertir el primer valor de la lista a int, pero se resuelve solo al volver a ejecutarlo.
 ___
-## Tecnologías
+## Librerias
 El proyecto se crea con:
 * numpy==1.18.2
 * PyQt5==5.14.2
@@ -39,7 +39,7 @@ El proyecto se crea con:
 * pyserial==3.4
 
 ___
-## Setup
+## Configuracion
 Para poder ejecutarlo tienes que abrir la terminal en la carpeta y escribir:
 ```
 $ virtualenv env
@@ -49,7 +49,7 @@ $ python3 interfaz.py
 ```
 Si no tienes la electrónica aun puedes probarla! Cuando la terminal te pide que escribas un puerto serie, escribe cualquier cosa y funcionará, obviamente no rastreará ningún dato. (pero el error de texto permanece ;v).
 ___
-## ¿Cómo funciona?
+## Como funciona
 ### ¿Cómo toma las muestras?
 Cada 500 ms toma una muestra, este número proviene de la tasa de datos que tiene el Arduino. El bucle es:
 ```
@@ -95,6 +95,6 @@ ___
 * Muchas otras personas frías en el desbordamiento de la pila.
 ___
 # Licencia
-Es [MIT]() <3. (por ahora)
+Es [MIT](https://github.com/el-NASA/Estacion-Terrena/blob/master/LICENSE) <3. (por ahora)
 
 Desarrollado por Daniel Alejandro Rodríguez Suárez, líder del semillero de investigación ATL, vinculado al grupo de investigación LIDER de la Universidad Distrital.
