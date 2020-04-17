@@ -94,6 +94,6 @@ ___
 * Many other cool people on stack overflow.
 ___
 # Licence
-It's [MIT]() <3. (for now)
+It's [MIT](https://github.com/el-NASA/Estacion-Terrena/blob/master/LICENSE) <3. (for now)
 
 Developed by Daniel Alejandro Rodriguez Suarez, leader of the ATL research seedbed, linked to the Universidad Distrital's LIDER research group.
