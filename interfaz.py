@@ -6,8 +6,8 @@ import math
 from dataBase import db
 from PyQt5.QtWidgets import QPushButton
 
-pg.setConfigOption('background', (227, 229, 219))
-pg.setConfigOption('foreground', 'k')
+pg.setConfigOption('background', (33, 33, 33))
+pg.setConfigOption('foreground', (197, 198, 199))
 # Variables de la interfaz
 app = QtGui.QApplication([])
 view = pg.GraphicsView()
@@ -40,9 +40,14 @@ Grafico.addLabel('LIDER - Semillero de investigación ATL',
 
 Grafico.nextRow()
 # botones de guardar datos
+
+# estilo de los botones
+estilo = "background-color:rgb(29, 185, 84);color:rgb(0,0,0);font-size:14px;"
+
 lb = Grafico.addLayout(colspan=21)
 proxy = QtGui.QGraphicsProxyWidget()
 b_ini_guardar = QtGui.QPushButton('iniciar almacenamiento')
+b_ini_guardar.setStyleSheet(estilo)
 b_ini_guardar.clicked.connect(db.iniciar)
 proxy.setWidget(b_ini_guardar)
 lb.addItem(proxy)
@@ -51,6 +56,7 @@ lb.nextCol()
 
 proxy2 = QtGui.QGraphicsProxyWidget()
 b_fin_guardar = QtGui.QPushButton('detener almacenamiento')
+b_fin_guardar.setStyleSheet(estilo)
 b_fin_guardar.clicked.connect(db.detener)
 proxy2.setWidget(b_fin_guardar)
 lb.addItem(proxy2)
@@ -60,11 +66,11 @@ Grafico.nextRow()
 
 # Grafico de altitud
 l1 = Grafico.addLayout(colspan=20, rowspan=2)
-l11 = l1.addLayout(rowspan=1, border=(0, 0, 0))
+l11 = l1.addLayout(rowspan=1, border=(83, 83, 83))
 # l1.setContentsMargins(10, 10, 10, 10)
 p1 = l11.addPlot(title="Altura (m)")
 # p1.hideAxis('bottom')
-curva_altura = p1.plot(pen="r")
+curva_altura = p1.plot(pen=(29, 185, 84))
 datos_altura = np.linspace(0, 0, 30)
 ptr1 = 0
 
@@ -81,7 +87,7 @@ def update_altura(valor):
 
 # grafico de la Velocidad
 p2 = l11.addPlot(title="Velocidad (m/s)")
-curva_vel = p2.plot(pen="b")
+curva_vel = p2.plot(pen=(29, 185, 84))
 datos_vel = np.linspace(0, 0, 30)
 ptr6 = 0
 vx = 0
@@ -93,9 +99,14 @@ vel = 0
 def update_vel(valor):
     global curva_vel, datos_vel, ptr6, vx, vy, vz, vel
     # 500 es dt
-    vx += (float(valor[8]) - 12) * 500
-    vy += (float(valor[9]) - 12) * 500
-    vz += (float(valor[10]) - 12) * 500
+    i = 0
+    if(i == 0):
+        vzo = float(valor[10])
+        i += 1
+
+    vx += (float(valor[8])) * 500
+    vy += (float(valor[9])) * 500
+    vz += (float(valor[10]) - vzo) * 500
     sum = math.pow(vx, 2) + math.pow(vy, 2) + math.pow(vz, 2)
     vel = math.sqrt(sum)
     datos_vel[:-1] = datos_vel[1:]
@@ -106,16 +117,16 @@ def update_vel(valor):
 
 
 l1.nextRow()
-l12 = l1.addLayout(rowspan=1, border=(0, 0, 0))
+l12 = l1.addLayout(rowspan=1, border=(83, 83, 83))
 
 # Grafico de aceleraciones
 GrafAcel = l12.addPlot(title="Aceleraciones (m/s²)")
 # añadiendo leyenda
 GrafAcel.addLegend()
 GrafAcel.hideAxis('bottom')
-curvaAcelX = GrafAcel.plot(pen="r", name="X")
-curvaAcelY = GrafAcel.plot(pen="g", name="Y")
-curvaAcelZ = GrafAcel.plot(pen="b", name="Z")
+curvaAcelX = GrafAcel.plot(pen=(102, 252, 241), name="X")
+curvaAcelY = GrafAcel.plot(pen=(29, 185, 84), name="Y")
+curvaAcelZ = GrafAcel.plot(pen=(203, 45, 111), name="Z")
 
 DatosAcelX = np.linspace(0, 0)
 DatosAcelY = np.linspace(0, 0)
@@ -148,9 +159,9 @@ GrafEuler = l12.addPlot(title="Gyro")
 GrafEuler.hideAxis('bottom')
 # añadiendo leyenda
 GrafEuler.addLegend()
-curvaPitch = GrafEuler.plot(pen="r", name="Pitch")
-curvaRoll = GrafEuler.plot(pen="g", name="Roll")
-curvaYaw = GrafEuler.plot(pen="b", name="Yaw")
+curvaPitch = GrafEuler.plot(pen=(102, 252, 241), name="Pitch")
+curvaRoll = GrafEuler.plot(pen=(29, 185, 84), name="Roll")
+curvaYaw = GrafEuler.plot(pen=(203, 45, 111), name="Yaw")
 
 DatosPitch = np.linspace(0, 0)
 DatosRoll = np.linspace(0, 0)
@@ -181,7 +192,7 @@ def update_gyro(valor):
 
 # Grafico Presion
 graf_presion = l12.addPlot(title="Presion barometrica")
-curva_presion = graf_presion.plot(pen="r")
+curva_presion = graf_presion.plot(pen=(102, 252, 241))
 datos_presion = np.linspace(0, 0, 30)
 ptr4 = 0
 
@@ -197,7 +208,7 @@ def update_presion(valor):
 
 # Grafico temperatura
 graf_temp = l12.addPlot(title="Temperatura (ºc)")
-curva_temp = graf_temp.plot(pen="r")
+curva_temp = graf_temp.plot(pen=(29, 185, 84))
 datos_temp = np.linspace(0, 0, 30)
 ptr5 = 0
 
@@ -212,14 +223,14 @@ def update_temp(valor):
 
 
 # Graficos de tiempo, bateria y caida
-l2 = Grafico.addLayout(border=(0, 0, 0))
+l2 = Grafico.addLayout(border=(83, 83, 83))
 
 
 # Grafico del tiempo
 GrafTiempo = l2.addPlot(title="Tiempo (min)")
 GrafTiempo.hideAxis('bottom')
 GrafTiempo.hideAxis('left')
-textoTiempo = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
+textoTiempo = pg.TextItem("test", anchor=(0.5, 0.5), color="w")
 textoTiempo.setFont(font)
 GrafTiempo.addItem(textoTiempo)
 
@@ -237,7 +248,7 @@ l2.nextRow()
 GrafBateria = l2.addPlot(title="bateria")
 GrafBateria.hideAxis('bottom')
 GrafBateria.hideAxis('left')
-textoBateria = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
+textoBateria = pg.TextItem("test", anchor=(0.5, 0.5), color="w")
 textoBateria.setFont(font)
 GrafBateria.addItem(textoBateria)
 
@@ -251,7 +262,7 @@ l2.nextRow()
 graf_clibre = l2.addPlot(title="caida libre")
 graf_clibre.hideAxis('bottom')
 graf_clibre.hideAxis('left')
-text_clibre = pg.TextItem("test", anchor=(0.5, 0.5), color="k")
+text_clibre = pg.TextItem("test", anchor=(0.5, 0.5), color="w")
 text_clibre.setFont(font)
 graf_clibre.addItem(text_clibre)
 
