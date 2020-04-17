@@ -1,7 +1,7 @@
 # Ground station for CanSat or OBC's
 Code for an ground station where different sensor data are displayed in real time.
 
-![imagen](https://i.imgur.com/taNcUUX.gif)
+![imagen](https://i.imgur.com/zDY3DnY.gif)
 
 ## Table of contents
 * [Support](#support)
@@ -94,6 +94,6 @@ ___
 * Many other cool people on stack overflow.
 ___
 # Licence
-It's [GPL3]() <3. (for now)
+It's [MIT]() <3. (for now)
 
 Developed by Daniel Alejandro Rodriguez Suarez, leader of the ATL research seedbed, linked to the Universidad Distrital's LIDER research group.
