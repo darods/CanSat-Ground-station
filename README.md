@@ -26,7 +26,7 @@ This project is strongly related to
 another [rocket science and CanSat](https://github.com/el-NASA/POA) project. **It's still in development.**
 
 ### Bugs
-* Most of the times the text items ddisappear, i invite you to solve this :v.
+* Most of the times the text items disappear, i invite you to solve this :v.
 
 * Sometimes it can't convert the first value of the list to int, but it solves it self by re-running it.
 ___
