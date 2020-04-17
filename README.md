@@ -8,7 +8,7 @@ Code for an ground station where different sensor data are displayed in real tim
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Setup](#setup)
-* [How does it work?](#how-does-it-work?)
+* [How does it work?](#how-does-it-work)
 * [Sources](#sources)
 * [Licence](#licence)
 
