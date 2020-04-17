@@ -1,7 +1,7 @@
 # Estación terrestre para CanSat o OBC's
 Código de una estación terrestre donde se muestran los datos de diferentes sensores en tiempo real.
 
-![imagen](https://i.imgur.com/taNcUUX.gif)
+![imagen](https://i.imgur.com/zDY3DnY.gif)
 
 ## Tabla de contenidos
 * [Apoyo](#support)
@@ -95,6 +95,6 @@ ___
 * Muchas otras personas frías en el desbordamiento de la pila.
 ___
 # Licencia
-Es [GPL3]() <3. (por ahora)
+Es [MIT]() <3. (por ahora)
 
 Desarrollado por Daniel Alejandro Rodríguez Suárez, líder del semillero de investigación ATL, vinculado al grupo de investigación LIDER de la Universidad Distrital.
