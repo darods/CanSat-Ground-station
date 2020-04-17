@@ -5,7 +5,7 @@ Código de una estación terrestre donde se muestran los datos de diferentes sen
 
 ## Tabla de contenidos
 * [Apoyo](#support)
-* [Información general](#info-general)
+* [Información general](#informacion-general)
 * [Liberias](#librerias)
 * [Configuración](#configuracion)
 * [¿Cómo funciona?](#como-funciona)
@@ -17,7 +17,7 @@ ___
 Si usaste este proyecto o aprendiste algo, por favor dale una estrella a este proyecto para seguir haciendo proyectos de código abierto.
 ___
 
-## Info general
+## Informacion general
 El propósito de este proyecto es hacer que los datos transmitidos por un OBC (ordenador de a bordo) o un CanSat sean comprensibles a primera vista a través de una cadena de texto en un puerto serie.
 
 El código está en español pero la lógica detrás es universal.
@@ -49,7 +49,7 @@ $ python3 interfaz.py
 ```
 Si no tienes la electrónica aun puedes probarla! Cuando la terminal te pide que escribas un puerto serie, escribe cualquier cosa y funcionará, obviamente no rastreará ningún dato. (pero el error de texto permanece ;v).
 ___
-## Como funciona
+## ¿Como funciona?
 ### ¿Cómo toma las muestras?
 Cada 500 ms toma una muestra, este número proviene de la tasa de datos que tiene el Arduino. El bucle es:
 ```
