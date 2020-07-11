@@ -14,7 +14,7 @@ view = pg.GraphicsView()
 Grafico = pg.GraphicsLayout()
 view.setCentralItem(Grafico)
 view.show()
-view.setWindowTitle('Monitereo de vuelo')
+view.setWindowTitle('Monitoreo de vuelo')
 view.resize(1200, 700)
 
 # se declara la clase que se comunica con el puerto serial
@@ -28,7 +28,7 @@ font.setPixelSize(90)
 
 # Title at top
 text = """
-Interfaz de monitroreo de vuelo para cansats y OBC's <br>
+Interfaz de monitoreo de vuelo para cansats y OBC's <br>
 desarrollados en la Universidad Distrital FJC.
 """
 Grafico.addLabel(text, col=1, colspan=21)
