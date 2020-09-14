@@ -1,5 +1,5 @@
-# Ground station for CanSat or OBC's
-Code for an ground station where different sensor data are displayed in real time.
+# Ground station GUI for CanSat or OBC's
+Code for a CanSat or OBCs GUI ground station where different sensor data are displayed in real time. **No sensors needed to try it**.
 
 ![imagen](https://i.imgur.com/zDY3DnY.gif)
 
@@ -21,15 +21,16 @@ ___
 ## General info
 The purpose of this project is to make a GUI for the data transmitted by an OBC (on board computer) or a CanSat understandable at first sight through a text string on a serial port.
 
-The code is in spanish but the logic behind is universal.
 
 This project is strongly related to
 another [rocket science and CanSat](https://github.com/el-NASA/POA) project. **It's still in development.**
 
 ### Bugs
-* Most of the times the text items disappear, i invite you to solve this :v.
+* Most of the times the text items disappear, i invite you to solve this.
 
 * Sometimes it can't convert the first value of the list to int, but it solves it self by re-running it.
+
+* the speed graph is under development, it grows to infinity.
 ___
 ## Technologies
 Project is created with:
@@ -46,9 +47,9 @@ To be able to run it you have to open the terminal in the folder and type:
 $ virtualenv env
 $ source env/bin/activate
 $ pip3 install -r requeriments.txt
-$ python3 interfaz.py
+$ python3 main.py
 ```
-if you don't have the electronics you can still use it! When the terminal asks you to write a serial port, write anything and it will work, obviously it won't trace any data. (but the text bug remains ;v).
+if you don't have the electronics you can still use it! When the terminal asks you to write a serial port, write anything and it will work, it will display random data. (but the text bug remains ;v).
 ___
 
 ## Setup Windows
@@ -57,12 +58,12 @@ Open CMD or PowerShell in the folder and type:
 > virtualenv env
 > \env\Scripts\activate.bat
 > pip install -r requeriments.txt
-> python interfaz.py
+> python main.py
 ```
 
 ## How does it work?
 ### How does it sample?
-Every 500 ms takes a sample, this number comes from the data rate that the Arduino has. The loop is:
+Every 500 ms takes a sample, this number comes from the data rate that the Arduino has **if you don't have the Arduino and Sensors, the GUI still works, it graphs random data**. The loop is:
 ```
 timer = pg.QtCore.QTimer()
 timer.timeout.connect(update)
@@ -70,7 +71,7 @@ timer.start(500)
 ```
 
 ### What values uses?
-The `update()` function updates the graphics and text of the interface. The first thing it does is get a list of the information to be updated, this list is noted as a `valor`.
+The `update()` function updates the graphics and text of the interface. The first thing it does is get a list of the information to be updated, this list is noted as a `value_chainr`.
 
 Then within `update` you execute the *update* methods specific to each element that depends on this list.
 
@@ -89,9 +90,9 @@ The values it receives are:
 
 
 ### How does it store the information?
-Clicking on the **iniciar almacenamiento** button calls a function of the **db** class that changes a state that determines whether the `guardar` method writes the information in the list. The same happens with the **detener almacenamiento** button.
+Clicking on the **Start storage** button calls a function of the **data_base** class that changes a state that determines whether the `guardar` method writes the information in the list. The same happens with the **Stop storage** button.
 
-In this file the list called `valor` is stored in the same order adding at the end the date that is registered in the computer.
+In this file the list called `value_chain` is stored in the same order adding at the end the date that is registered in the computer.
 
 ___
 ## Sources

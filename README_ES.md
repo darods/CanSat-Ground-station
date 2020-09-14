@@ -1,27 +1,25 @@
-# Estación terrestre para CanSat o OBC's
-Código de una GUI para una estación terrestre para CanSats y/o OBCs donde se muestran los datos de diferentes sensores en tiempo real.
+# GUI Estación terrestre para CanSat u OBC's
+Código de una GUI para una estación terrestre para CanSats y/o OBCs donde se muestran los datos de diferentes sensores en tiempo real. **No se necesitan sensores para probarlo**.
 
 ![imagen](https://i.imgur.com/zDY3DnY.gif)
 
 ## Tabla de contenidos
-* [Apoyo](#support)
+* [Apoyo](#apoyo)
 * [Información general](#informacion-general)
 * [Liberias](#librerias)
 * [Configuración Linux](#configuracion-linux)
-* [Configuración Windows](#configuracion-windows) 
+* [Configuración Windows](#configuracion-windows)
 * [¿Cómo funciona?](#como-funciona)
 * [Fuentes](#fuentes)
 * [Licencia](#licencia)
 
 ___
-## Support
+## Apoyo
 Si usaste este proyecto o aprendiste algo, por favor dale una estrella a este proyecto para seguir haciendo proyectos de código abierto.
 ___
 
 ## Informacion general
 El propósito de este proyecto es hacer una GUI en la que los datos transmitidos por un OBC (ordenador de a bordo) o un CanSat sean comprensibles a primera vista a través de una cadena de texto en un puerto serie.
-
-El código está en español pero la lógica detrás es universal.
 
 Este proyecto está fuertemente relacionado con
 otro proyecto de [ciencia de cohetes y CanSat](https://github.com/el-NASA/POA). **Está todavía en desarrollo.**
@@ -30,6 +28,8 @@ otro proyecto de [ciencia de cohetes y CanSat](https://github.com/el-NASA/POA). 
 * La mayoría de las veces los elementos de texto desaparecen, los invito a resolver esto.
 
 * A veces no puede convertir el primer valor de la lista a int, pero se resuelve solo al volver a ejecutarlo.
+
+* el gráfico de velocidad está en desarrollo, crece hasta el infinito.
 ___
 ## Librerias
 El proyecto se crea con:
@@ -44,11 +44,11 @@ ___
 Para poder ejecutarlo tienes que abrir la terminal en la carpeta y escribir:
 ```
 $ virtualenv env
-$ fuente env/bin/activar
+$ fuente env/bin/activate
 $ pip3 install -r requiments.txt
-$ python3 interfaz.py
+$ python3 main.py
 ```
-Si no tienes la electrónica aun puedes probarla! Cuando la terminal te pide que escribas un puerto serie, escribe cualquier cosa y funcionará, obviamente no rastreará ningún dato. (pero el error de texto permanece ;v).
+Si no tienes la electrónica aun puedes probarla! Cuando la terminal te pide que escribas un puerto serie, escribe cualquier cosa y funcionará, graficará datos aleatorios. (pero el error de texto permanece ;v).
 ___
 
 ## Configuracion Windows
@@ -57,12 +57,12 @@ Abre CMD o PowerShell en la dirección de la carpeta y escribe los siguientes co
 > virutalenv env
 > \env\Scripts\activate.bat
 > pip install -r requeriments.txt
-> python interfaz.py
+> python main.py
 
 ```
 ## ¿Como funciona?
 ### ¿Cómo toma las muestras?
-Cada 500 ms toma una muestra, este número proviene de la tasa de datos que tiene el Arduino. El bucle es:
+Cada 500 ms toma una muestra, este número proviene de la tasa de datos que tiene el Arduino, **si no tiene el Arduino y los sensores, la GUI aún funciona, grafica datos aleatorios**. El bucle es:
 ```
 timer = pg.QtCore.QTimer()
 timer.timeout.connect(update)
@@ -70,7 +70,7 @@ timer.start(500)
 ```
 
 ### Que valores usa?
-La función `update()` actualiza los gráficos y el texto de la interfaz. Lo primero que hace es obtener una lista de la información a ser actualizada, esta lista es anotada como un "valor".
+La función `update()` actualiza los gráficos y el texto de la interfaz. Lo primero que hace es obtener una lista de la información a ser actualizada, esta lista es anotada como un `value_chain`.
 
 Luego, dentro de `update` se ejecutan los métodos *update* específicos para cada elemento que depende de esta lista.
 
@@ -90,9 +90,9 @@ Los valores que recibe son:
 
 
 ### ¿Cómo almacena la información?
-Pulsando el botón **iniciar almacenamiento** llama a una función de la clase **db** que cambia un estado que determina si el método `guardar` escribe la información en la lista. Lo mismo ocurre con el botón **detener almacenamiento**.
+Pulsando el botón **Start storage** llama a una función de la clase **data_base** que cambia un estado que determina si el método `guardar` escribe la información en la lista. Lo mismo ocurre con el botón **Stop storage**.
 
-En este archivo la lista llamada `valor` se almacena en el mismo orden añadiendo al final la fecha que se registra en el ordenador.
+En este archivo la lista llamada `value_chain` se almacena en el mismo orden añadiendo al final la fecha que se registra en el ordenador.
 
 ___
 ## Fuentes
