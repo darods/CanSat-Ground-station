@@ -2,21 +2,21 @@ import time
 import csv
 
 
-class db():
+class data_base():
     def __init__(self):
-        self.estado = False
+        self.state = False
 
-    def guardar(self, dato):
-        if self.estado == True:
-            dato.append(time.asctime())
+    def guardar(self, data):
+        if self.state == True:
+            data.append(time.asctime())
             with open("flight_data.csv", "a") as f:
                 writer = csv.writer(f, delimiter=",")
-                writer.writerow(dato)
+                writer.writerow(data)
 
-    def iniciar(self):
-        self.estado = True
-        print('iniciando almacenamiento en csv')
+    def start(self):
+        self.state = True
+        print('starting storage in csv')
 
-    def detener(self):
-        self.estado = False
-        print('deteniendo almacenamiento en csv')
+    def stop(self):
+        self.state = False
+        print('stopping storage in csv')
