@@ -7,7 +7,8 @@ Code for an ground station where different sensor data are displayed in real tim
 * [Support](#support)
 * [General info](#general-info)
 * [Technologies](#technologies)
-* [Setup](#setup)
+* [Setup Linux](#setup-linux)
+* [Setup Windows](#setup-windows)
 * [How does it work?](#how-does-it-work)
 * [Sources](#sources)
 * [Licence](#licence)
@@ -18,7 +19,7 @@ If you used this project or learned something please give this project a star to
 ___
 
 ## General info
-The purpose of this project is to make the data transmitted by an OBC (on board computer) or a CanSat understandable at first sight through a text string on a serial port.
+The purpose of this project is to make a GUI for the data transmitted by an OBC (on board computer) or a CanSat understandable at first sight through a text string on a serial port.
 
 The code is in spanish but the logic behind is universal.
 
@@ -39,7 +40,7 @@ Project is created with:
 * pyserial==3.4
 
 ___
-## Setup
+## Setup Linux
 To be able to run it you have to open the terminal in the folder and type:
 ```
 $ virtualenv env
@@ -49,6 +50,16 @@ $ python3 interfaz.py
 ```
 if you don't have the electronics you can still use it! When the terminal asks you to write a serial port, write anything and it will work, obviously it won't trace any data. (but the text bug remains ;v).
 ___
+
+## Setup Windows
+Open CMD or PowerShell in the folder and type:
+```
+> virtualenv env
+> \env\Scripts\activate.bat
+> pip install -r requeriments.txt
+> python interfaz.py
+```
+
 ## How does it work?
 ### How does it sample?
 Every 500 ms takes a sample, this number comes from the data rate that the Arduino has. The loop is:
