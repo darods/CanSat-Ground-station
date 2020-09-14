@@ -3,3 +3,6 @@ environment/
 __pycache__/
 env/
 flight_data.csv
+abstract_grafico.py
+boton.py
+uso_objetos.py
