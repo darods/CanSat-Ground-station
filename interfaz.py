@@ -296,7 +296,7 @@ def update():
     # QtGui.QApplication.processEvents()
 
 
-if(ser.isOpen()):
+if(ser.isOpen()) or (ser.dummyMode()):
     timer = pg.QtCore.QTimer()
     timer.timeout.connect(update)
     timer.start(500)
