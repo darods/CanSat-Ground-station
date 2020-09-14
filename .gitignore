@@ -2,6 +2,7 @@
 environment/
 __pycache__/
 env/
+Imagenes/
 flight_data.csv
 abstract_grafico.py
 boton.py

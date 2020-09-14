@@ -1,5 +1,5 @@
 # Estación terrestre para CanSat o OBC's
-Código de una estación terrestre donde se muestran los datos de diferentes sensores en tiempo real.
+Código de una GUI para una estación terrestre para CanSats y/o OBCs donde se muestran los datos de diferentes sensores en tiempo real.
 
 ![imagen](https://i.imgur.com/zDY3DnY.gif)
 
@@ -7,7 +7,8 @@ Código de una estación terrestre donde se muestran los datos de diferentes sen
 * [Apoyo](#support)
 * [Información general](#informacion-general)
 * [Liberias](#librerias)
-* [Configuración](#configuracion)
+* [Configuración Linux](#configuracion-linux)
+* [Configuración Windows](#configuracion-windows) 
 * [¿Cómo funciona?](#como-funciona)
 * [Fuentes](#fuentes)
 * [Licencia](#licencia)
@@ -18,7 +19,7 @@ Si usaste este proyecto o aprendiste algo, por favor dale una estrella a este pr
 ___
 
 ## Informacion general
-El propósito de este proyecto es hacer que los datos transmitidos por un OBC (ordenador de a bordo) o un CanSat sean comprensibles a primera vista a través de una cadena de texto en un puerto serie.
+El propósito de este proyecto es hacer una GUI en la que los datos transmitidos por un OBC (ordenador de a bordo) o un CanSat sean comprensibles a primera vista a través de una cadena de texto en un puerto serie.
 
 El código está en español pero la lógica detrás es universal.
 
@@ -39,7 +40,7 @@ El proyecto se crea con:
 * pyserial==3.4
 
 ___
-## Configuracion
+## Configuracion Linux
 Para poder ejecutarlo tienes que abrir la terminal en la carpeta y escribir:
 ```
 $ virtualenv env
@@ -49,6 +50,16 @@ $ python3 interfaz.py
 ```
 Si no tienes la electrónica aun puedes probarla! Cuando la terminal te pide que escribas un puerto serie, escribe cualquier cosa y funcionará, obviamente no rastreará ningún dato. (pero el error de texto permanece ;v).
 ___
+
+## Configuracion Windows
+Abre CMD o PowerShell en la dirección de la carpeta y escribe los siguientes comandos:
+```
+> virutalenv env
+> \env\Scripts\activate.bat
+> pip install -r requeriments.txt
+> python interfaz.py
+
+```
 ## ¿Como funciona?
 ### ¿Cómo toma las muestras?
 Cada 500 ms toma una muestra, este número proviene de la tasa de datos que tiene el Arduino. El bucle es:
