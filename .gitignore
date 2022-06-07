@@ -1,5 +1,5 @@
 .idea/
-environment/
+env/
 __pycache__/
 env/
 Imagenes/
@@ -7,3 +7,4 @@ flight_data.csv
 abstract_grafico.py
 boton.py
 uso_objetos.py
+EjemploPyqtgrapgh.py
