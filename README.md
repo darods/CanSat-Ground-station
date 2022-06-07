@@ -1,5 +1,6 @@
 # Ground station GUI for CanSat or OBC's
 Code for a CanSat or OBCs GUI ground station where different sensor data are displayed in real time. **No sensors needed to try it**.
+**2022 jun update**.
 
 ![imagen](https://i.imgur.com/zDY3DnY.gif)
 
@@ -34,11 +35,12 @@ another [rocket science and CanSat](https://github.com/el-NASA/POA) project. **I
 ___
 ## Technologies
 Project is created with:
-* numpy==1.18.2
-* PyQt5==5.14.2
-* PyQt5-sip==12.7.2
-* pyqtgraph==0.10.0
-* pyserial==3.4
+* numpy==1.22.4
+* PyQt5==5.15.6
+* PyQt5-Qt5==5.15.2
+* PyQt5-sip==12.10.1
+* pyqtgraph==0.12.4
+* pyserial==3.5
 
 ___
 ## Setup Linux
