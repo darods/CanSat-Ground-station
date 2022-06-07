@@ -33,11 +33,13 @@ otro proyecto de [ciencia de cohetes y CanSat](https://github.com/el-NASA/POA). 
 ___
 ## Librerias
 El proyecto se crea con:
-* numpy==1.18.2
-* PyQt5==5.14.2
-* PyQt5-sip==12.7.2
-* pyqtgraph==0.10.0
-* pyserial==3.4
+* numpy==1.22.4
+* PyQt5==5.15.6
+* PyQt5-Qt5==5.15.2
+* PyQt5-sip==12.10.1
+* pyqtgraph==0.12.4
+* pyserial==3.5
+
 
 ___
 ## Configuracion Linux
