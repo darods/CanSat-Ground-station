@@ -38,7 +38,7 @@ class Communication:
                 return
 
         try:
-            self.ser = serial.Serial(self.portName, self.baudrate, timeout=1)
+            self.ser = serial.Serial(self.portName, self.baudrate, timeout=0.05)
             print(f"[Communication] Connected to {self.portName} @ {self.baudrate} baud.")
         except (serial.SerialException, OSError) as e:
             print(f"[Communication] Could not open port {self.portName}: {e}")
@@ -76,7 +76,7 @@ class Communication:
             return []
 
         # Dummy data generation
-        self.dummy_time_ms += 500
+        self.dummy_time_ms += 50
         time_val = self.dummy_time_ms
         altitude_val = random.randint(0, 300)
         free_fall_val = random.getrandbits(1)

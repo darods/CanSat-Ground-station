@@ -26,7 +26,7 @@ def main():
     parser.add_argument("--port", type=str, default=None, help="Serial port (e.g. /dev/ttyUSB0, COM3, /dev/tty.usbmodem14101)")
     parser.add_argument("--baud", type=int, default=9600, help="Baud rate (default: 9600)")
     parser.add_argument("--dummy", action="store_true", help="Force simulated telemetry data mode")
-    parser.add_argument("--interval", type=int, default=500, help="Telemetry update interval in ms (default: 500)")
+    parser.add_argument("--interval", type=int, default=50, help="Telemetry update interval in ms (default: 50)")
     args = parser.parse_args()
 
     # PyQtGraph theme configuration
