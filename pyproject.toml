@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cansat-ground-station"
+version = "0.2.0"
+description = "Cross-platform real-time telemetry ground station interface for CanSats and OBCs"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "LIDER - ATL Research Group" }
+]
+dependencies = [
+    "numpy>=1.24.0",
+    "PyQt6>=6.4.0",
+    "pyqtgraph>=0.13.1",
+    "pyserial>=3.5",
+]
+
+[project.scripts]
+cansat-ground-station = "main:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]

@@ -1,6 +1,0 @@
-numpy==1.22.4
-PyQt5==5.15.6
-PyQt5-Qt5==5.15.2
-PyQt5-sip==12.10.1
-pyqtgraph==0.12.4
-pyserial==3.5
