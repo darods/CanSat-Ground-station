@@ -37,3 +37,10 @@ dev = [
 pythonpath = ["."]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers --cov=communication --cov=dataBase --cov=graphs --cov=main --cov-report=term-missing"
+
+# Upstream pyqtgraph `_pinv_fallback` mutates `arr.shape` on a NumPy array,
+# which NumPy 2.5 deprecates. It is not our code and cannot be fixed here;
+# remove this filter once pyqtgraph fixes it.
+filterwarnings = [
+    "ignore:Setting the shape on a NumPy array has been deprecated:DeprecationWarning:pyqtgraph.functions",
+]
