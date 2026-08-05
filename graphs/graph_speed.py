@@ -1,52 +1,47 @@
+"""Speed graph module.
+
+Displays a scrolling trace of the scalar speed (m/s). The telemetry only
+provides 3-axis acceleration (frame indices 8-10), so the velocity is
+obtained by numerically integrating the acceleration in real time using the
+wall clock between samples.
+"""
+
 import math
-import numpy as np
-import pyqtgraph as pg
+import time
+
+from graphs.base import ScrollingPlot
 
 
-class graph_speed(pg.PlotItem):
-    """Plot item for displaying magnitude speed (m/s)."""
+class graph_speed(ScrollingPlot):
+    """Live scrolling plot of the magnitude of the velocity (m/s)."""
 
-    def __init__(
-        self,
-        parent=None,
-        name=None,
-        labels=None,
-        title="Speed (m/s)",
-        viewBox=None,
-        axisItems=None,
-        enableMenu=True,
-        **kargs,
-    ):
-        super().__init__(parent, name, labels, title, viewBox, axisItems, enableMenu, **kargs)
-        self.vel_plot = self.plot(pen=(29, 185, 84))
-        self.vel_data = np.zeros(30)
-        self.ptr = 0
+    def __init__(self):
+        super().__init__(title="Speed (m/s)", pens=[(29, 185, 84)], ylabel="m/s")
         self.vx = 0.0
         self.vy = 0.0
         self.vz = 0.0
-        self.vzo = None
+        self.vzo = None  # baseline Z acceleration (gravity) removed before integrating
+        self._last_t = time.monotonic()
 
-    def update(self, vx, vy, vz):
+    def update(self, ax, ay, az):
+        """Integrate one acceleration sample and push the resulting speed."""
         try:
-            ax = float(vx)
-            ay = float(vy)
-            az = float(vz)
+            ax, ay, az = float(ax), float(ay), float(az)
+
+            # Time step computed from the real wall clock so the integration
+            # stays consistent no matter what the update interval is.
+            now = time.monotonic()
+            dt = now - self._last_t
+            self._last_t = now
 
             if self.vzo is None:
                 self.vzo = az
 
-            dt = 0.5  # 500 ms in seconds
             self.vx += ax * dt
             self.vy += ay * dt
-            self.vz += (az - self.vzo) * dt
+            self.vz += (az - self.vzo) * dt  # gravity removed -> "dynamic" Z
 
-            vel_sq = math.pow(self.vx, 2) + math.pow(self.vy, 2) + math.pow(self.vz, 2)
-            vel = math.sqrt(vel_sq)
-
-            self.vel_data[:-1] = self.vel_data[1:]
-            self.vel_data[-1] = vel
-            self.ptr += 1
-            self.vel_plot.setData(self.vel_data)
-            self.vel_plot.setPos(self.ptr, 0)
+            speed = math.sqrt(self.vx**2 + self.vy**2 + self.vz**2)
+            self._push(speed)
         except (ValueError, TypeError):
             pass

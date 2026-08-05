@@ -22,9 +22,9 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "numpy", specifier = ">=1.24.0" },
-    { name = "pyqt6", specifier = ">=6.4.0" },
-    { name = "pyqtgraph", specifier = ">=0.13.1" },
+    { name = "numpy", specifier = ">=2.0.0" },
+    { name = "pyqt6", specifier = ">=6.11.0" },
+    { name = "pyqtgraph", specifier = ">=0.14.0" },
     { name = "pyserial", specifier = ">=3.5" },
 ]
 

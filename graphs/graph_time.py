@@ -1,22 +1,17 @@
+"""Elapsed-time graph module.
+
+Displays the mission elapsed time as a large text readout (minutes),
+converted from the millisecond timestamp in telemetry frame index 0.
+"""
+
 import pyqtgraph as pg
 
 
 class graph_time(pg.PlotItem):
-    """Text plot item for displaying Elapsed Time (min)."""
+    """Text plot item for displaying elapsed time in minutes."""
 
-    def __init__(
-        self,
-        parent=None,
-        name=None,
-        labels=None,
-        title="Time (min)",
-        viewBox=None,
-        axisItems=None,
-        enableMenu=True,
-        font=None,
-        **kargs,
-    ):
-        super().__init__(parent, name, labels, title, viewBox, axisItems, enableMenu, **kargs)
+    def __init__(self, font=None, **kwargs):
+        super().__init__(title="Time (min)", **kwargs)
         self.hideAxis("bottom")
         self.hideAxis("left")
         self.time_text = pg.TextItem("0.0", anchor=(0.5, 0.5), color="w")
@@ -25,9 +20,9 @@ class graph_time(pg.PlotItem):
         self.addItem(self.time_text)
 
     def update(self, value):
+        """Refresh the readout with the latest elapsed-time sample (ms)."""
         try:
-            val_num = float(value)
-            tiempo = round(val_num / 60000.0, 2)
-            self.time_text.setText(str(tiempo))
+            minutes = float(value) / 60000.0
+            self.time_text.setText(f"{minutes:.2f}")
         except (ValueError, TypeError):
             pass
