@@ -57,7 +57,7 @@ options:
   --port PORT          Serial port device name (e.g. /dev/ttyUSB0, COM3, /dev/tty.usbmodem14101)
   --baud BAUD          Serial baud rate (default: 9600)
   --dummy              Force simulated telemetry data mode
-  --interval INTERVAL  Telemetry polling rate in ms (default: 500)
+  --interval INTERVAL  Telemetry polling rate in ms (default: 50)
 ```
 
 ---
@@ -79,6 +79,14 @@ The station reads comma-separated CSV frames from serial hardware (or generates 
 | `8` | Accel X | X-axis acceleration (m/s²) |
 | `9` | Accel Y | Y-axis acceleration (m/s²) |
 | `10` | Accel Z | Z-axis acceleration (m/s²) |
+| `11` | Battery | Battery charge % (dummy mode only, optional on hardware) |
+
+> **Dummy mode** runs a realistic sub-orbital flight simulator: motor burn,
+> ballistic coast to apogee (weightlessness / free fall), terminal-velocity
+> descent, parachute recovery and a slowly draining battery. The elapsed-time
+> clock advances 1:1 with real wall-clock time. While you hold a plot panel
+> with the mouse to pan/zoom, the trace is paused and snaps back to the live
+> position when you release the button.
 
 Data can be saved to `flight_data.csv` in real-time by clicking **Start storage** on the GUI.
 

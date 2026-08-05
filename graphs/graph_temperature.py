@@ -1,32 +1,21 @@
-import numpy as np
-import pyqtgraph as pg
+"""Temperature graph module.
+
+Displays a scrolling trace of the ambient temperature (Celsius), read from
+telemetry frame index 3, using the shared :class:`ScrollingPlot` base.
+"""
+
+from graphs.base import ScrollingPlot
 
 
-class graph_temperature(pg.PlotItem):
-    """Plot item for displaying Temperature (°C)."""
+class graph_temperature(ScrollingPlot):
+    """Live scrolling plot of temperature in degrees Celsius."""
 
-    def __init__(
-        self,
-        parent=None,
-        name=None,
-        labels=None,
-        title="Temperature (°C)",
-        viewBox=None,
-        axisItems=None,
-        enableMenu=True,
-        **kargs,
-    ):
-        super().__init__(parent, name, labels, title, viewBox, axisItems, enableMenu, **kargs)
-        self.temp_plot = self.plot(pen=(29, 185, 84))
-        self.temp_data = np.zeros(30)
-        self.ptr = 0
+    def __init__(self):
+        super().__init__(title="Temperature (°C)", pens=[(29, 185, 84)], ylabel="°C")
 
     def update(self, value):
+        """Push the latest temperature sample onto the scrolling trace."""
         try:
-            self.temp_data[:-1] = self.temp_data[1:]
-            self.temp_data[-1] = float(value)
-            self.ptr += 1
-            self.temp_plot.setData(self.temp_data)
-            self.temp_plot.setPos(self.ptr, 0)
+            self._push(float(value))
         except (ValueError, TypeError):
             pass
