@@ -24,3 +24,16 @@ cansat-ground-station = "main:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["."]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "pytest-qt>=4.5.0",
+]
+
+[tool.pytest.ini_options]
+# Make the project root importable so tests can `import communication`, etc.
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --cov=communication --cov=dataBase --cov=graphs --cov=main --cov-report=term-missing"

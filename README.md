@@ -92,6 +92,28 @@ Data can be saved to `flight_data.csv` in real-time by clicking **Start storage*
 
 ---
 
+## 🧪 Testing
+
+This is a development tool that keeps evolving, so the telemetry pipeline is
+covered by unit tests. Run the full suite (headless, no display needed):
+
+```bash
+uv run pytest
+```
+
+Run a single area:
+
+```bash
+uv run pytest tests/test_communication.py
+uv run pytest -k "battery or free_fall"
+```
+
+Every run prints a coverage report for `communication`, `dataBase`,
+`graphs` and `main`. See [`docs/TESTING.md`](docs/TESTING.md) for the test
+layout, conventions, and a guide on adding new tests.
+
+---
+
 ## 📦 Stack & Compatibility
 
 - **Package Manager**: [`uv`](https://astral-sh.github.io/uv/)
