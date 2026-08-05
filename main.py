@@ -32,6 +32,7 @@ def main():
     # PyQtGraph theme configuration
     pg.setConfigOption("background", (33, 33, 33))
     pg.setConfigOption("foreground", (197, 198, 199))
+    pg.setConfigOptions(antialias=True)
 
     # Initialize Qt Application
     app = QtWidgets.QApplication(sys.argv)
@@ -115,6 +116,7 @@ def main():
     view.show()
 
     def update():
+        """Poll one telemetry frame and feed every panel with its fields."""
         try:
             value_chain = ser.getData()
             if not value_chain or len(value_chain) < 11:
@@ -127,6 +129,10 @@ def main():
             pressure.update(value_chain[4])
             temperature.update(value_chain[3])
             free_fall.update(value_chain[2])
+            # Battery is only present in the dummy-mode frames (index 11);
+            # hardware frames without it simply keep the readout unchanged.
+            if len(value_chain) > 11:
+                battery.update(value_chain[11])
             db.guardar(value_chain)
         except IndexError:
             pass

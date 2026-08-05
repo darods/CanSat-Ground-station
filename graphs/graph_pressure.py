@@ -1,32 +1,25 @@
-import numpy as np
-import pyqtgraph as pg
+"""Barometric pressure graph module.
+
+Displays a scrolling trace of the barometric pressure (hPa), read from
+telemetry frame index 4, using the shared :class:`ScrollingPlot` base.
+"""
+
+from graphs.base import ScrollingPlot
 
 
-class graph_pressure(pg.PlotItem):
-    """Plot item for displaying Barometric Pressure (hPa)."""
+class graph_pressure(ScrollingPlot):
+    """Live scrolling plot of barometric pressure in hectopascals."""
 
-    def __init__(
-        self,
-        parent=None,
-        name=None,
-        labels=None,
-        title="Barometric Pressure (hPa)",
-        viewBox=None,
-        axisItems=None,
-        enableMenu=True,
-        **kargs,
-    ):
-        super().__init__(parent, name, labels, title, viewBox, axisItems, enableMenu, **kargs)
-        self.pressure_plot = self.plot(pen=(102, 252, 241))
-        self.pressure_data = np.zeros(30)
-        self.ptr = 0
+    def __init__(self):
+        super().__init__(
+            title="Barometric Pressure (hPa)",
+            pens=[(102, 252, 241)],
+            ylabel="hPa",
+        )
 
     def update(self, value):
+        """Push the latest pressure sample onto the scrolling trace."""
         try:
-            self.pressure_data[:-1] = self.pressure_data[1:]
-            self.pressure_data[-1] = float(value)
-            self.ptr += 1
-            self.pressure_plot.setData(self.pressure_data)
-            self.pressure_plot.setPos(self.ptr, 0)
+            self._push(float(value))
         except (ValueError, TypeError):
             pass
