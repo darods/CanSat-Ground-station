@@ -1,32 +1,21 @@
-import numpy as np
-import pyqtgraph as pg
+"""Altitude graph module.
+
+Displays a scrolling trace of the CanSat relative altitude (m), read from
+telemetry frame index 1, using the shared :class:`ScrollingPlot` base.
+"""
+
+from graphs.base import ScrollingPlot
 
 
-class graph_altitude(pg.PlotItem):
-    """Plot item for displaying Altitude (m)."""
+class graph_altitude(ScrollingPlot):
+    """Live scrolling plot of altitude in meters."""
 
-    def __init__(
-        self,
-        parent=None,
-        name=None,
-        labels=None,
-        title="Altitude (m)",
-        viewBox=None,
-        axisItems=None,
-        enableMenu=True,
-        **kargs,
-    ):
-        super().__init__(parent, name, labels, title, viewBox, axisItems, enableMenu, **kargs)
-        self.altitude_plot = self.plot(pen=(29, 185, 84))
-        self.altitude_data = np.zeros(30)
-        self.ptr1 = 0
+    def __init__(self):
+        super().__init__(title="Altitude (m)", pens=[(29, 185, 84)], ylabel="m")
 
     def update(self, value):
+        """Push the latest altitude sample onto the scrolling trace."""
         try:
-            self.altitude_data[:-1] = self.altitude_data[1:]
-            self.altitude_data[-1] = float(value)
-            self.ptr1 += 1
-            self.altitude_plot.setData(self.altitude_data)
-            self.altitude_plot.setPos(self.ptr1, 0)
+            self._push(float(value))
         except (ValueError, TypeError):
             pass

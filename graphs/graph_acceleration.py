@@ -1,51 +1,26 @@
-import numpy as np
-import pyqtgraph as pg
+"""3-axis acceleration graph module.
+
+Displays scrolling traces of the X/Y/Z acceleration (m/s²), read from
+telemetry frame indices 8-10, using the shared :class:`ScrollingPlot` base.
+"""
+
+from graphs.base import ScrollingPlot
 
 
-class graph_acceleration(pg.PlotItem):
-    """Plot item for 3-axis Acceleration data (X, Y, Z in m/s²)."""
+class graph_acceleration(ScrollingPlot):
+    """Live scrolling plot of the 3-axis acceleration with a legend."""
 
-    def __init__(
-        self,
-        parent=None,
-        name=None,
-        labels=None,
-        title="Acceleration (m/s²)",
-        viewBox=None,
-        axisItems=None,
-        enableMenu=True,
-        **kargs,
-    ):
-        super().__init__(parent, name, labels, title, viewBox, axisItems, enableMenu, **kargs)
-        self.addLegend()
-        self.hideAxis("bottom")
-
-        self.accX_plot = self.plot(pen=(102, 252, 241), name="X")
-        self.accY_plot = self.plot(pen=(29, 185, 84), name="Y")
-        self.accZ_plot = self.plot(pen=(203, 45, 111), name="Z")
-
-        self.accX_data = np.zeros(30)
-        self.accY_data = np.zeros(30)
-        self.accZ_data = np.zeros(30)
-        self.ptr = 0
+    def __init__(self):
+        super().__init__(
+            title="Acceleration (m/s²)",
+            pens=[(102, 252, 241), (29, 185, 84), (203, 45, 111)],
+            names=["X", "Y", "Z"],
+            hide_bottom=True,
+        )
 
     def update(self, ax, ay, az):
+        """Push the latest acceleration sample (X, Y, Z) onto the traces."""
         try:
-            self.accX_data[:-1] = self.accX_data[1:]
-            self.accY_data[:-1] = self.accY_data[1:]
-            self.accZ_data[:-1] = self.accZ_data[1:]
-
-            self.accX_data[-1] = float(ax)
-            self.accY_data[-1] = float(ay)
-            self.accZ_data[-1] = float(az)
-            self.ptr += 1
-
-            self.accX_plot.setData(self.accX_data)
-            self.accY_plot.setData(self.accY_data)
-            self.accZ_plot.setData(self.accZ_data)
-
-            self.accX_plot.setPos(self.ptr, 0)
-            self.accY_plot.setPos(self.ptr, 0)
-            self.accZ_plot.setPos(self.ptr, 0)
+            self._push(float(ax), float(ay), float(az))
         except (ValueError, TypeError):
             pass
