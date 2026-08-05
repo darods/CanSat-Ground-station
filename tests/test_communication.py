@@ -200,13 +200,15 @@ def test_battery_drains_faster_during_burn(comm):
 # Real-time mission clock
 # --------------------------------------------------------------------------- #
 def test_dummy_time_tracks_wall_clock(comm):
+    # The mission clock is monotonic-based (see communication.py), so it must
+    # advance 1:1 with the internal clock. Fast-forward it deterministically
+    # instead of sleeping: a real ``time.sleep`` is flaky on loaded CI runners,
+    # where a descheduled process makes the wall clock run ahead of the sleep.
     frame0 = comm.getData()
-    sleep_for = 0.08
-    time.sleep(sleep_for)
+    comm._dummy_start = time.monotonic() - 1.0
     frame1 = comm.getData()
     elapsed_ms = float(frame1[I_TIME]) - float(frame0[I_TIME])
-    # The mission clock advances 1:1 with the wall clock (loose tolerance).
-    assert abs(elapsed_ms / 1000.0 - sleep_for) < 0.02
+    assert elapsed_ms == pytest.approx(1000.0, abs=50.0)
 
 
 # --------------------------------------------------------------------------- #
