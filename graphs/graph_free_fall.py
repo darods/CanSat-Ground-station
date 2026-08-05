@@ -7,8 +7,9 @@ Displays the free-fall detection flag as a large centered text readout
 
 from graphs.base import TextPlot
 
-# Values that count as "no free fall" in the telemetry frame.
-_FALSE_VALUES = ("0", "False", "false", "")
+# Values that count as "free fall" in the telemetry frame. Anything else
+# (including unexpected numbers like "2") is shown as "No".
+_TRUE_VALUES = ("1", "True", "true")
 
 
 class graph_free_fall(TextPlot):
@@ -19,4 +20,4 @@ class graph_free_fall(TextPlot):
 
     def update(self, value):
         """Refresh the readout with the latest free-fall flag."""
-        self.set_text("Yes" if str(value).strip() not in _FALSE_VALUES else "No")
+        self.set_text("Yes" if str(value).strip() in _TRUE_VALUES else "No")

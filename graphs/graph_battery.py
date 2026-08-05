@@ -9,6 +9,8 @@ battery field the readout keeps its last value. Built on the shared
 
 from graphs.base import TextPlot
 
+import math
+
 
 class graph_battery(TextPlot):
     """Text plot item for displaying battery status."""
@@ -21,6 +23,9 @@ class graph_battery(TextPlot):
         if value is None:
             return
         try:
-            self.set_text(f"{float(value):.0f}%")
+            charge = float(value)
+            if not math.isfinite(charge):
+                return
+            self.set_text(f"{charge:.0f}%")
         except (ValueError, TypeError):
             pass

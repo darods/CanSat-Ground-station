@@ -55,5 +55,28 @@ def test_guardar_ignores_empty_data(tmp_path):
     assert not (tmp_path / "flight.csv").exists()
 
 
+def test_guardar_neutralizes_formula_injection(tmp_path):
+    # Spreadsheets execute cells starting with =, + or @ as formulas; the
+    # logger must neutralise them so a malicious frame can't run code on open.
+    db = DataBase(filename=tmp_path / "flight.csv")
+    db.start()
+    db.guardar(["=2+5", "+SUM(A1)", "@cmd", "  =1+1", "normal"])
+    rows = list(csv.reader((tmp_path / "flight.csv").open()))
+    assert rows[0][0].startswith("'=")
+    assert rows[0][1].startswith("'+")
+    assert rows[0][2].startswith("'@")
+    assert rows[0][3].startswith("'=")
+    assert rows[0][4] == "normal"
+
+
+def test_guardar_keeps_negative_numbers(tmp_path):
+    # "-" is a legitimate numeric prefix and must not be neutralised.
+    db = DataBase(filename=tmp_path / "flight.csv")
+    db.start()
+    db.guardar(["-5.5"])
+    rows = list(csv.reader((tmp_path / "flight.csv").open()))
+    assert rows[0][0] == "-5.5"
+
+
 def test_backwards_compatible_alias():
     assert DataBase is not None

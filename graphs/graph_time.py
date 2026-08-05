@@ -7,6 +7,8 @@ the shared :class:`TextPlot` base so the readout never vanishes.
 
 from graphs.base import TextPlot
 
+import math
+
 
 class graph_time(TextPlot):
     """Text plot item for displaying elapsed time in minutes."""
@@ -18,6 +20,8 @@ class graph_time(TextPlot):
         """Refresh the readout with the latest elapsed-time sample (ms)."""
         try:
             minutes = float(value) / 60000.0
+            if not math.isfinite(minutes):
+                return
             self.set_text(f"{minutes:.2f}")
         except (ValueError, TypeError):
             pass

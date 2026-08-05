@@ -94,13 +94,18 @@ class Communication:
 
         Guards against partial first frames and boot chatter from the device,
         which would otherwise break the numeric conversion in the graphs.
+        Non-finite numbers (``nan``/``inf``) are rejected too: a single
+        poisoned sample would permanently corrupt the speed integrator and
+        could break plot auto-ranging.
         """
         if len(value_chain) < 11:
             return False
         for field in value_chain[:11]:
             try:
-                float(field)
+                value = float(field)
             except (ValueError, TypeError):
+                return False
+            if not math.isfinite(value):
                 return False
         return True
 
@@ -123,7 +128,7 @@ class Communication:
         """
         if not self.dummyMode():
             try:
-                line = self.ser.readline()
+                line = self.ser.readline(2048)
                 decoded = line.decode("utf-8", errors="ignore").strip()
                 if decoded:
                     value_chain = [v.strip() for v in decoded.split(",")]
@@ -150,8 +155,11 @@ class Communication:
 
         state = self._flight_state(elapsed_s)
 
-        # Barometric formula: pressure as a function of altitude.
-        pressure = 1013.25 * (1.0 - 2.25577e-5 * state["alt"]) ** 5.25588
+        # Barometric formula: pressure as a function of altitude. The base is
+        # clamped so extreme altitudes can never make the exponent produce a
+        # complex number (which would crash ``round()`` below).
+        base = max(0.0, 1.0 - 2.25577e-5 * state["alt"])
+        pressure = 1013.25 * base**5.25588
 
         # Standard atmospheric lapse rate: cooler the higher you go.
         temperature = 15.0 - 0.0065 * state["alt"]
@@ -203,7 +211,7 @@ class Communication:
             str(round(state["alt"], 1)),
             str(state["free_fall"]),
             str(round(temperature + random.uniform(-0.5, 0.5), 1)),
-            str(round(pressure + random.uniform(-0.4, 0.4), 1)),
+            str(round(max(0.0, pressure + random.uniform(-0.4, 0.4)), 1)),
             str(round(gyro_pitch, 2)),
             str(round(gyro_roll, 2)),
             str(round(gyro_yaw, 2)),
