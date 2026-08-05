@@ -27,9 +27,12 @@ packages = ["."]
 
 [dependency-groups]
 dev = [
+    "bandit>=1.9.4",
+    "pip-audit>=2.10.1",
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
     "pytest-qt>=4.5.0",
+    "ruff>=0.16.1",
 ]
 
 [tool.pytest.ini_options]
@@ -44,3 +47,35 @@ addopts = "-ra --strict-markers --cov=communication --cov=dataBase --cov=graphs 
 filterwarnings = [
     "ignore:Setting the shape on a NumPy array has been deprecated:DeprecationWarning:pyqtgraph.functions",
 ]
+
+[tool.ruff]
+# Keep ruff aligned with the project's Python floor.
+target-version = "py310"
+src = ["."]
+exclude = [".venv", ".git"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "SIM", # flake8-simplify
+    "C4",  # flake8-comprehensions
+]
+ignore = [
+    "E501", # line length (ruff formatter enforces style instead)
+]
+
+[tool.ruff.format]
+# ruff format is the enforced style (CI runs `ruff format --check`).
+
+[tool.bandit]
+# `random.uniform` (B311) is used only to add noise to the dummy flight
+# simulator -- not for anything security-sensitive -- so it is a false
+# positive here.
+skips = ["B311"]
+exclude_dirs = ["tests", ".venv"]
+

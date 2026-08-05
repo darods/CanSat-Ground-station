@@ -20,7 +20,7 @@ import time
 import numpy as np
 import pytest
 
-from graphs.base import ScrollingPlot, ScrollingViewBox, TextPlot
+from graphs.base import ScrollingViewBox
 
 
 # --------------------------------------------------------------------------- #

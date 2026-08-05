@@ -30,6 +30,21 @@ All commands work from the project root. Every run produces a coverage
 report for `communication`, `dataBase`, `graphs` and `main`; the summary
 prints the lines that are still uncovered so you know what to test next.
 
+## CI
+
+The same checks run on GitHub Actions for every push/PR (`.github/workflows/ci.yml`):
+`ruff check` + `ruff format --check`, the test suite on Ubuntu/macOS/Windows,
+an import smoke check, `pip-audit` for dependency vulnerabilities and
+`bandit -c pyproject.toml` for source scanning. Lint and formatting are
+enforced there, so run them locally before pushing:
+
+```sh
+uv run ruff check .
+uv run ruff format .
+uv run pip-audit
+uv run bandit -c pyproject.toml -r communication.py dataBase.py main.py graphs/
+```
+
 ## Headless mode
 
 All tests run **headless** (`QT_QPA_PLATFORM=offscreen`), which is forced in

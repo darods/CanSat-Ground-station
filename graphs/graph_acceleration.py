@@ -4,6 +4,8 @@ Displays scrolling traces of the X/Y/Z acceleration (m/s²), read from
 telemetry frame indices 8-10, using the shared :class:`ScrollingPlot` base.
 """
 
+from contextlib import suppress
+
 from graphs.base import ScrollingPlot
 
 
@@ -20,7 +22,5 @@ class graph_acceleration(ScrollingPlot):
 
     def update(self, ax, ay, az):
         """Push the latest acceleration sample (X, Y, Z) onto the traces."""
-        try:
+        with suppress(ValueError, TypeError):
             self._push(float(ax), float(ay), float(az))
-        except (ValueError, TypeError):
-            pass

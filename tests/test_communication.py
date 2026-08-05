@@ -24,7 +24,20 @@ import communication as comm_module
 from communication import Communication
 
 # Frame indexes (must match the schema documented in README.md).
-I_TIME, I_ALT, I_FF, I_TEMP, I_PRESS, I_PITCH, I_ROLL, I_YAW, I_AX, I_AY, I_AZ, I_BATT = range(12)
+(
+    I_TIME,
+    I_ALT,
+    I_FF,
+    I_TEMP,
+    I_PRESS,
+    I_PITCH,
+    I_ROLL,
+    I_YAW,
+    I_AX,
+    I_AY,
+    I_AZ,
+    I_BATT,
+) = range(12)
 
 
 def frame_at(comm: Communication, t: float) -> list:
@@ -35,8 +48,9 @@ def frame_at(comm: Communication, t: float) -> list:
     return comm.getData()
 
 
-def run_mission(comm: Communication, duration_s: float, step: float = 0.05,
-                start: float = 0.0) -> list:
+def run_mission(
+    comm: Communication, duration_s: float, step: float = 0.05, start: float = 0.0
+) -> list:
     """Simulate ``duration_s`` of a mission starting at mission time ``start``.
 
     ``getData`` accumulates the battery drain across calls, so a mission has
@@ -139,7 +153,7 @@ def test_altitude_never_negative(comm):
 # Derived channels: pressure and temperature follow altitude
 # --------------------------------------------------------------------------- #
 def test_pressure_decreases_with_altitude(comm):
-    low = float(frame_at(comm, 2.0)[I_PRESS])    # near the pad
+    low = float(frame_at(comm, 2.0)[I_PRESS])  # near the pad
     high = float(frame_at(comm, comm_module._T_APOGEE)[I_PRESS])
     assert low > high
 
@@ -156,7 +170,7 @@ def test_temperature_decreases_with_altitude(comm):
 def test_battery_monotonic(comm):
     frames = run_mission(comm, 400.0)
     values = [float(f[I_BATT]) for f in frames]
-    for prev, curr in zip(values, values[1:]):
+    for prev, curr in zip(values, values[1:], strict=False):
         assert curr <= prev, f"battery increased: {prev} -> {curr}"
     assert values[0] == 100.0
 

@@ -18,7 +18,19 @@ def test_guardar_writes_row(tmp_path):
 
     rows = list(csv.reader((tmp_path / "flight.csv").open()))
     assert len(rows) == 1
-    assert rows[0][:11] == ["0", "100", "1", "20.1", "1013", "0", "0", "0", "0", "0", "9.8"]
+    assert rows[0][:11] == [
+        "0",
+        "100",
+        "1",
+        "20.1",
+        "1013",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "9.8",
+    ]
     # A local timestamp column is appended.
     assert len(rows[0]) == 12
 

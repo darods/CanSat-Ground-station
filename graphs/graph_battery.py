@@ -7,16 +7,18 @@ battery field the readout keeps its last value. Built on the shared
 :class:`TextPlot` base so the readout never vanishes.
 """
 
-from graphs.base import TextPlot
-
 import math
+
+from graphs.base import TextPlot
 
 
 class graph_battery(TextPlot):
     """Text plot item for displaying battery status."""
 
     def __init__(self, font=None, **kwargs):
-        super().__init__(title="Battery Status", initial_text="100%", font=font, **kwargs)
+        super().__init__(
+            title="Battery Status", initial_text="100%", font=font, **kwargs
+        )
 
     def update(self, value=None):
         """Refresh the readout with the latest battery percentage."""

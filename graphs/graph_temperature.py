@@ -4,6 +4,8 @@ Displays a scrolling trace of the ambient temperature (Celsius), read from
 telemetry frame index 3, using the shared :class:`ScrollingPlot` base.
 """
 
+from contextlib import suppress
+
 from graphs.base import ScrollingPlot
 
 
@@ -15,7 +17,5 @@ class graph_temperature(ScrollingPlot):
 
     def update(self, value):
         """Push the latest temperature sample onto the scrolling trace."""
-        try:
+        with suppress(ValueError, TypeError):
             self._push(float(value))
-        except (ValueError, TypeError):
-            pass
