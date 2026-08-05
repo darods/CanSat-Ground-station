@@ -15,6 +15,7 @@ fast-forward the internal monotonic clock (``frame_at``). The simulator is
 otherwise deterministic enough to assert on.
 """
 
+import math
 import time
 
 import pytest
@@ -219,3 +220,27 @@ def test_is_valid_frame_rejects_short_frame():
 
 def test_is_valid_frame_rejects_empty():
     assert Communication._is_valid_frame([]) is False
+
+
+def test_is_valid_frame_rejects_non_finite():
+    # A single nan/inf sample would permanently corrupt the speed integrator
+    # and could break plot auto-ranging, so the validator must drop it.
+    for bad in ["nan", "inf", "-inf", "1e999"]:
+        frame = [bad, "0", "0", "20", "1013", "0", "0", "0", "0", "0", "9.8"]
+        assert Communication._is_valid_frame(frame) is False, bad
+
+
+# --------------------------------------------------------------------------- #
+# Extreme-altitude safety
+# --------------------------------------------------------------------------- #
+def test_pressure_finite_at_extreme_altitude(monkeypatch, comm):
+    # The barometric formula used to produce a complex number above ~44 km,
+    # which crashed round(); the clamped base must keep it finite instead.
+    monkeypatch.setattr(
+        comm,
+        "_flight_state",
+        lambda t: {"alt": 50000.0, "free_fall": 0, "accel_z": 9.81, "motor_on": False},
+    )
+    frame = comm.getData()
+    assert math.isfinite(float(frame[I_PRESS]))
+    assert float(frame[I_PRESS]) >= 0.0

@@ -68,6 +68,9 @@ def main():  # pragma: no cover - GUI entry point, not unit-tested
     parser.add_argument("--dummy", action="store_true", help="Force simulated telemetry data mode")
     parser.add_argument("--interval", type=int, default=50, help="Telemetry update interval in ms (default: 50)")
     args = parser.parse_args()
+    # A polling interval of 0 or less would make the timer fire as fast as
+    # possible and starve the event loop; enforce a sane floor.
+    args.interval = max(10, args.interval)
 
     # PyQtGraph theme configuration
     pg.setConfigOption("background", (33, 33, 33))

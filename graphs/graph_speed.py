@@ -27,10 +27,22 @@ class graph_speed(ScrollingPlot):
         """Integrate one acceleration sample and push the resulting speed."""
         try:
             ax, ay, az = float(ax), float(ay), float(az)
+            # Reject nan/inf: once a non-finite value enters the integrator
+            # it never recovers, so the speed trace would be dead forever.
+            if not (math.isfinite(ax) and math.isfinite(ay) and math.isfinite(az)):
+                return
 
             # Time step computed from the real wall clock so the integration
             # stays consistent no matter what the update interval is.
             now = time.monotonic()
+
+            # While the user is dragging the panel the trace is frozen; freeze
+            # the velocity too and just refresh the baseline so that resuming
+            # the integration does not cause a sudden jump.
+            if self.paused:
+                self._last_t = now
+                return
+
             dt = now - self._last_t
             self._last_t = now
 
