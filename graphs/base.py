@@ -1,7 +1,7 @@
 """
 Shared infrastructure for the live-scrolling telemetry plots.
 
-This module provides two pieces of reusable machinery:
+This module provides three pieces of reusable machinery:
 
 * ``ScrollingViewBox`` -- a pyqtgraph ``ViewBox`` that notices when the user
   grabs a plot with the mouse to pan or zoom. While the button is held down
@@ -14,6 +14,13 @@ This module provides two pieces of reusable machinery:
   refreshing the curves, downsampling and clip-to-view, so each concrete
   graph (altitude, pressure, temperature, ...) only has to push fresh values
   through :meth:`ScrollingPlot._push`.
+
+* ``TextPlot`` -- a :class:`pg.PlotItem` that shows a single centered text
+  readout (time, battery, free-fall). The text is anchored to the center of
+  the view box, the view is pinned to a unit square and the text is
+  re-centered on every range change, so the readout can never drift out of
+  view or vanish after an auto-range (a long-standing pyqtgraph TextItem
+  quirk -- see https://stackoverflow.com/q/46017022).
 """
 
 import numpy as np
@@ -109,3 +116,42 @@ class ScrollingPlot(pg.PlotItem):
         for i, curve in enumerate(self._curves):
             curve.setData(self._buffer[:, i])
             curve.setPos(self.ptr, 0)
+
+
+class TextPlot(pg.PlotItem):
+    """Plot panel that renders a single centered text readout.
+
+    Text readouts are built on a ``pg.TextItem`` anchored to the *center* of
+    the view box. The view is pinned to a normalized (0, 1) unit square and
+    the text is re-centered on every range change, so the readout can never
+    drift out of view or vanish after an auto-range. Subclasses only need to
+    implement :meth:`update` and call :meth:`set_text`.
+    """
+
+    def __init__(self, title, initial_text="", font=None, color="w", **kwargs):
+        super().__init__(title=title, **kwargs)
+        self.hideAxis("bottom")
+        self.hideAxis("left")
+
+        self.text_item = pg.TextItem(initial_text, anchor=(0.5, 0.5), color=color)
+        if font is not None:
+            self.text_item.setFont(font)
+        self.addItem(self.text_item)
+
+        # Pin the view to a unit square and keep the text glued to its center.
+        self.vb.sigRangeChanged.connect(lambda *_: self._center_text())
+        self.setRange(xRange=(0.0, 1.0), yRange=(0.0, 1.0), padding=0.0)
+        self._center_text()
+
+    def _center_text(self):
+        """Re-anchor the text to the middle of the currently visible range."""
+        xr, yr = self.viewRange()
+        self.text_item.setPos((xr[0] + xr[1]) / 2.0, (yr[0] + yr[1]) / 2.0)
+
+    def set_text(self, text: str):
+        """Refresh the displayed text."""
+        self.text_item.setText(text)
+
+    def update(self, value):
+        """Push a new telemetry sample into the readout (implemented by subclasses)."""
+        raise NotImplementedError
