@@ -1,0 +1,33 @@
+# Dependabot keeps dependencies up to date and opens PRs for known
+# vulnerabilities. It is free on every GitHub plan for public AND private
+# repositories.
+#
+# The pip ecosystem resolves pyproject.toml + uv.lock.
+
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Bogota"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    groups:
+      runtime:
+        patterns: ["numpy", "PyQt6", "pyqtgraph", "pyserial"]
+      dev:
+        patterns: ["pytest*", "pytest-*", "ruff", "bandit", "pip-audit"]
+    versioning-strategy: "auto"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"

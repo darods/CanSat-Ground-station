@@ -5,9 +5,9 @@ converted from the millisecond timestamp in telemetry frame index 0. Built on
 the shared :class:`TextPlot` base so the readout never vanishes.
 """
 
-from graphs.base import TextPlot
-
 import math
+
+from graphs.base import TextPlot
 
 
 class graph_time(TextPlot):

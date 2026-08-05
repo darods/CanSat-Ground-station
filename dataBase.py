@@ -3,8 +3,8 @@ Data Logging Module for CanSat Ground Station.
 Handles CSV persistence with UTF-8 encoding and cross-platform file safety.
 """
 
-import time
 import csv
+import time
 from pathlib import Path
 
 # Spreadsheets execute cells that start with these characters as formulas
@@ -33,7 +33,9 @@ class DataBase:
     def guardar(self, data: list):
         """Append telemetry row with current timestamp if storage is active."""
         if self.state and data:
-            row = [_neutralize_formula(v) for v in data] + [time.strftime("%Y-%m-%d %H:%M:%S")]
+            row = [_neutralize_formula(v) for v in data] + [
+                time.strftime("%Y-%m-%d %H:%M:%S")
+            ]
             try:
                 with open(self.filepath, "a", newline="", encoding="utf-8") as f:
                     writer = csv.writer(f, delimiter=",")

@@ -3,10 +3,11 @@ Flight Monitoring Interface for CanSats and OBCs.
 Supports Linux, macOS, and Windows 11 with PyQt6/PyQt5 and pyqtgraph.
 """
 
-import sys
 import argparse
+import sys
+
 import pyqtgraph as pg
-from pyqtgraph.Qt import QtGui, QtCore, QtWidgets
+from pyqtgraph.Qt import QtCore, QtGui, QtWidgets
 
 from communication import Communication
 from dataBase import DataBase
@@ -25,8 +26,19 @@ from graphs.graph_time import graph_time
 MIN_FRAME_FIELDS = 11
 
 
-def dispatch_frame(frame, altitude, speed, acceleration, gyro, pressure,
-                   temperature, time_graph, free_fall, battery, db=None):
+def dispatch_frame(
+    frame,
+    altitude,
+    speed,
+    acceleration,
+    gyro,
+    pressure,
+    temperature,
+    time_graph,
+    free_fall,
+    battery,
+    db=None,
+):
     """Dispatch one parsed telemetry frame to every graph panel.
 
     The frame follows the comma-separated schema documented in ``README.md``:
@@ -62,11 +74,27 @@ def dispatch_frame(frame, altitude, speed, acceleration, gyro, pressure,
 
 
 def main():  # pragma: no cover - GUI entry point, not unit-tested
-    parser = argparse.ArgumentParser(description="CanSat Ground Station Flight Monitoring Interface")
-    parser.add_argument("--port", type=str, default=None, help="Serial port (e.g. /dev/ttyUSB0, COM3, /dev/tty.usbmodem14101)")
-    parser.add_argument("--baud", type=int, default=9600, help="Baud rate (default: 9600)")
-    parser.add_argument("--dummy", action="store_true", help="Force simulated telemetry data mode")
-    parser.add_argument("--interval", type=int, default=50, help="Telemetry update interval in ms (default: 50)")
+    parser = argparse.ArgumentParser(
+        description="CanSat Ground Station Flight Monitoring Interface"
+    )
+    parser.add_argument(
+        "--port",
+        type=str,
+        default=None,
+        help="Serial port (e.g. /dev/ttyUSB0, COM3, /dev/tty.usbmodem14101)",
+    )
+    parser.add_argument(
+        "--baud", type=int, default=9600, help="Baud rate (default: 9600)"
+    )
+    parser.add_argument(
+        "--dummy", action="store_true", help="Force simulated telemetry data mode"
+    )
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=50,
+        help="Telemetry update interval in ms (default: 50)",
+    )
     args = parser.parse_args()
     # A polling interval of 0 or less would make the timer fire as fast as
     # possible and starve the event loop; enforce a sane floor.
@@ -162,8 +190,15 @@ def main():  # pragma: no cover - GUI entry point, not unit-tested
         """Poll one telemetry frame and feed every panel with its fields."""
         dispatch_frame(
             ser.getData(),
-            altitude, speed, acceleration, gyro, pressure,
-            temperature, time_graph, free_fall, battery,
+            altitude,
+            speed,
+            acceleration,
+            gyro,
+            pressure,
+            temperature,
+            time_graph,
+            free_fall,
+            battery,
             db=db,
         )
 
