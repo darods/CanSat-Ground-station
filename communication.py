@@ -52,6 +52,7 @@ class Communication:
         self._dummy_start = None  # monotonic clock reference for the simulator
         self._battery_drain = 0.0  # accumulated battery drain during the mission
         self._last_sim_t = None  # last mission time, to accumulate drain correctly
+        self._warned_bad_frame = False  # only warn once about a malformed frame
 
         if force_dummy:
             print("[Communication] Force dummy mode activated.")
@@ -73,6 +74,9 @@ class Communication:
 
         try:
             self.ser = serial.Serial(self.portName, self.baudrate, timeout=0.05)
+            # Discard stale bytes (device boot chatter, leftovers from a
+            # previous session) so the very first frame read is clean.
+            self.ser.reset_input_buffer()
             print(f"[Communication] Connected to {self.portName} @ {self.baudrate} baud.")
         except (serial.SerialException, OSError) as e:
             print(f"[Communication] Could not open port {self.portName}: {e}")
@@ -83,6 +87,22 @@ class Communication:
     def get_available_ports() -> list[str]:
         """Return a list of available serial port names across OS platforms."""
         return [p.device for p in serial.tools.list_ports.comports()]
+
+    @staticmethod
+    def _is_valid_frame(value_chain: list) -> bool:
+        """Return True if the frame has all required fields and they are numeric.
+
+        Guards against partial first frames and boot chatter from the device,
+        which would otherwise break the numeric conversion in the graphs.
+        """
+        if len(value_chain) < 11:
+            return False
+        for field in value_chain[:11]:
+            try:
+                float(field)
+            except (ValueError, TypeError):
+                return False
+        return True
 
     def close(self):
         """Close the serial port connection if active."""
@@ -107,7 +127,14 @@ class Communication:
                 decoded = line.decode("utf-8", errors="ignore").strip()
                 if decoded:
                     value_chain = [v.strip() for v in decoded.split(",")]
-                    return value_chain
+                    if self._is_valid_frame(value_chain):
+                        return value_chain
+                    # The first frame after (re)connecting is frequently a
+                    # partial line or boot text from the device. Skip it
+                    # instead of letting a bad field break the graphs.
+                    if not self._warned_bad_frame:
+                        self._warned_bad_frame = True
+                        print("[Communication] Skipping malformed frame (partial/boot line?).")
             except Exception as e:
                 print(f"[Communication] Error reading serial data: {e}")
             # Fallback for empty frame or error
