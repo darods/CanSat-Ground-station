@@ -20,8 +20,48 @@ from graphs.graph_speed import graph_speed
 from graphs.graph_temperature import graph_temperature
 from graphs.graph_time import graph_time
 
+# Minimum fields a usable telemetry frame must carry (the 12th, battery,
+# is optional and only sent in dummy mode).
+MIN_FRAME_FIELDS = 11
 
-def main():
+
+def dispatch_frame(frame, altitude, speed, acceleration, gyro, pressure,
+                   temperature, time_graph, free_fall, battery, db=None):
+    """Dispatch one parsed telemetry frame to every graph panel.
+
+    The frame follows the comma-separated schema documented in ``README.md``:
+
+    * ``frame[0]``  elapsed time (ms) -> ``time_graph``
+    * ``frame[1]``  altitude (m)     -> ``altitude``
+    * ``frame[2]``  free-fall flag   -> ``free_fall``
+    * ``frame[3]``  temperature (°C) -> ``temperature``
+    * ``frame[4]``  pressure (hPa)   -> ``pressure``
+    * ``frame[5..7]``  gyro pitch/roll/yaw -> ``gyro``
+    * ``frame[8..10]`` accel X/Y/Z   -> ``acceleration`` and ``speed``
+    * ``frame[11]`` battery (%)      -> ``battery`` (optional; older hardware
+      frames may omit it and the readout simply keeps its last value)
+
+    If ``db`` is given the frame is also persisted. Returns ``True`` when the
+    frame was processed, ``False`` when it was too short to use.
+    """
+    if not frame or len(frame) < MIN_FRAME_FIELDS:
+        return False
+    altitude.update(frame[1])
+    speed.update(frame[8], frame[9], frame[10])
+    time_graph.update(frame[0])
+    acceleration.update(frame[8], frame[9], frame[10])
+    gyro.update(frame[5], frame[6], frame[7])
+    pressure.update(frame[4])
+    temperature.update(frame[3])
+    free_fall.update(frame[2])
+    if len(frame) > MIN_FRAME_FIELDS:
+        battery.update(frame[MIN_FRAME_FIELDS])
+    if db is not None:
+        db.guardar(frame)
+    return True
+
+
+def main():  # pragma: no cover - GUI entry point, not unit-tested
     parser = argparse.ArgumentParser(description="CanSat Ground Station Flight Monitoring Interface")
     parser.add_argument("--port", type=str, default=None, help="Serial port (e.g. /dev/ttyUSB0, COM3, /dev/tty.usbmodem14101)")
     parser.add_argument("--baud", type=int, default=9600, help="Baud rate (default: 9600)")
@@ -117,27 +157,12 @@ def main():
 
     def update():
         """Poll one telemetry frame and feed every panel with its fields."""
-        try:
-            value_chain = ser.getData()
-            if not value_chain or len(value_chain) < 11:
-                return
-            altitude.update(value_chain[1])
-            speed.update(value_chain[8], value_chain[9], value_chain[10])
-            time_graph.update(value_chain[0])
-            acceleration.update(value_chain[8], value_chain[9], value_chain[10])
-            gyro.update(value_chain[5], value_chain[6], value_chain[7])
-            pressure.update(value_chain[4])
-            temperature.update(value_chain[3])
-            free_fall.update(value_chain[2])
-            # Battery is only present in the dummy-mode frames (index 11);
-            # hardware frames without it simply keep the readout unchanged.
-            if len(value_chain) > 11:
-                battery.update(value_chain[11])
-            db.guardar(value_chain)
-        except IndexError:
-            pass
-        except Exception as e:
-            print(f"[GroundStation] Update error: {e}")
+        dispatch_frame(
+            ser.getData(),
+            altitude, speed, acceleration, gyro, pressure,
+            temperature, time_graph, free_fall, battery,
+            db=db,
+        )
 
     timer = QtCore.QTimer()
     timer.timeout.connect(update)
@@ -148,5 +173,5 @@ def main():
     sys.exit(exec_func())
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
