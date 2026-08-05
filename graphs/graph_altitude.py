@@ -4,6 +4,8 @@ Displays a scrolling trace of the CanSat relative altitude (m), read from
 telemetry frame index 1, using the shared :class:`ScrollingPlot` base.
 """
 
+from contextlib import suppress
+
 from graphs.base import ScrollingPlot
 
 
@@ -15,7 +17,5 @@ class graph_altitude(ScrollingPlot):
 
     def update(self, value):
         """Push the latest altitude sample onto the scrolling trace."""
-        try:
+        with suppress(ValueError, TypeError):
             self._push(float(value))
-        except (ValueError, TypeError):
-            pass

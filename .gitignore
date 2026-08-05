@@ -8,3 +8,8 @@ abstract_grafico.py
 boton.py
 uso_objetos.py
 EjemploPyqtgrapgh.py
+
+# Test / coverage artifacts
+.coverage
+htmlcov/
+.pytest_cache/

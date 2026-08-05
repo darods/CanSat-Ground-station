@@ -1,0 +1,40 @@
+name: CodeQL
+
+# Semantic security analysis (data-flow, injection, CWE patterns).
+#
+# NOTE: CodeQL code scanning is free on *public* repositories. On a
+# private repository it requires the paid GitHub Advanced Security (GHAS)
+# add-on, in which case the "security-events: write" upload step below will
+# fail. Free private-repo alternative: the `security` job in ci.yml
+# (bandit + pip-audit).
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  schedule:
+    - cron: "27 4 * * 1" # weekly, Monday 04:27 UTC
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [python]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3

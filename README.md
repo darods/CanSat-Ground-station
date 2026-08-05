@@ -6,6 +6,8 @@ Modernized to support **Linux**, **macOS**, and **Windows 11** using modern Pyth
 
 ![Ground Station Interface](https://i.imgur.com/zDY3DnY.gif)
 
+[![CI](https://github.com/darods/CanSat-Ground-station/actions/workflows/ci.yml/badge.svg)](https://github.com/darods/CanSat-Ground-station/actions/workflows/ci.yml)
+
 ---
 
 ## ⚡ Quick Start with `uv`
@@ -89,6 +91,43 @@ The station reads comma-separated CSV frames from serial hardware (or generates 
 > position when you release the button.
 
 Data can be saved to `flight_data.csv` in real-time by clicking **Start storage** on the GUI.
+
+---
+
+## 🧪 Testing
+
+This is a development tool that keeps evolving, so the telemetry pipeline is
+covered by unit tests. Run the full suite (headless, no display needed):
+
+```bash
+uv run pytest
+```
+
+Run a single area:
+
+```bash
+uv run pytest tests/test_communication.py
+uv run pytest -k "battery or free_fall"
+```
+
+Every run prints a coverage report for `communication`, `dataBase`,
+`graphs` and `main`. See [`docs/TESTING.md`](docs/TESTING.md) for the test
+layout, conventions, and a guide on adding new tests.
+
+---
+
+## ⚙️ CI/CD
+
+Everything runs on **GitHub Actions and is free** — no paid tier needed:
+
+- **`ci.yml`** — on every push/PR: `ruff` lint + format, the full `pytest`
+  suite headless on Ubuntu / macOS / Windows, an import smoke check,
+  `pip-audit` (dependency CVEs) and `bandit` (source-level security scan).
+- **`codeql.yml`** — weekly + on PR: GitHub CodeQL semantic analysis. Free
+  for public repos; requires the paid GHAS add-on on private repos.
+- **`dependabot.yml`** — weekly PRs for outdated pip/`uv.lock` and
+  GitHub Actions dependencies, plus automatic PRs for known vulnerabilities
+  (free for public and private repos).
 
 ---
 

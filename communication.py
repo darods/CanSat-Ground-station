@@ -24,27 +24,29 @@ import serial.tools.list_ports
 
 # --- Dummy-mode flight profile constants --------------------------------
 # A realistic sounding-rocket trajectory for a CanSat:
-GRAVITY = 9.81          # m/s²
-THRUST_ACC = 80.0       # net upward acceleration while the motor burns (m/s²)
-T_THRUST = 3.0          # seconds the motor burns
-CHUTE_DROP_S = 12.0     # seconds of ballistic free fall before the parachute opens
-TERMINAL_V = 45.0       # terminal velocity cap during ballistic descent (m/s)
-CHUTE_SINK = 8.0        # vertical descent rate under parachute (m/s)
+GRAVITY = 9.81  # m/s²
+THRUST_ACC = 80.0  # net upward acceleration while the motor burns (m/s²)
+T_THRUST = 3.0  # seconds the motor burns
+CHUTE_DROP_S = 12.0  # seconds of ballistic free fall before the parachute opens
+TERMINAL_V = 45.0  # terminal velocity cap during ballistic descent (m/s)
+CHUTE_SINK = 8.0  # vertical descent rate under parachute (m/s)
 
 # Derived flight times / heights (constant, computed once).
-_BURNOUT_V = THRUST_ACC * T_THRUST                       # speed at motor burnout
-_T_APOGEE = T_THRUST + _BURNOUT_V / GRAVITY              # time of maximum altitude
+_BURNOUT_V = THRUST_ACC * T_THRUST  # speed at motor burnout
+_T_APOGEE = T_THRUST + _BURNOUT_V / GRAVITY  # time of maximum altitude
 _H_APOGEE = 0.5 * THRUST_ACC * T_THRUST**2 + _BURNOUT_V**2 / (2 * GRAVITY)
-_T_CHUTE = _T_APOGEE + CHUTE_DROP_S                      # parachute deploy time
+_T_CHUTE = _T_APOGEE + CHUTE_DROP_S  # parachute deploy time
 _FALL_DIST = min(0.5 * GRAVITY * CHUTE_DROP_S**2, TERMINAL_V * CHUTE_DROP_S)
-_H_CHUTE = max(0.0, _H_APOGEE - _FALL_DIST)              # altitude at deploy
-_T_LAND = _T_CHUTE + _H_CHUTE / CHUTE_SINK               # touchdown time
+_H_CHUTE = max(0.0, _H_APOGEE - _FALL_DIST)  # altitude at deploy
+_T_LAND = _T_CHUTE + _H_CHUTE / CHUTE_SINK  # touchdown time
 
 
 class Communication:
     """Manages the serial connection with the CanSat or generates simulated data."""
 
-    def __init__(self, port: str | None = None, baudrate: int = 9600, force_dummy: bool = False):
+    def __init__(
+        self, port: str | None = None, baudrate: int = 9600, force_dummy: bool = False
+    ):
         self.baudrate = baudrate
         self.portName = port or ""
         self.dummyPlug = force_dummy
@@ -66,7 +68,9 @@ class Communication:
         if not self.portName:
             if available:
                 self.portName = available[0].device
-                print(f"[Communication] No port specified. Selecting first available: {self.portName}")
+                print(
+                    f"[Communication] No port specified. Selecting first available: {self.portName}"
+                )
             else:
                 print("[Communication] No serial ports found. Activating dummy mode.")
                 self.dummyPlug = True
@@ -77,7 +81,9 @@ class Communication:
             # Discard stale bytes (device boot chatter, leftovers from a
             # previous session) so the very first frame read is clean.
             self.ser.reset_input_buffer()
-            print(f"[Communication] Connected to {self.portName} @ {self.baudrate} baud.")
+            print(
+                f"[Communication] Connected to {self.portName} @ {self.baudrate} baud."
+            )
         except (serial.SerialException, OSError) as e:
             print(f"[Communication] Could not open port {self.portName}: {e}")
             print("[Communication] Fallback to dummy mode.")
@@ -94,13 +100,18 @@ class Communication:
 
         Guards against partial first frames and boot chatter from the device,
         which would otherwise break the numeric conversion in the graphs.
+        Non-finite numbers (``nan``/``inf``) are rejected too: a single
+        poisoned sample would permanently corrupt the speed integrator and
+        could break plot auto-ranging.
         """
         if len(value_chain) < 11:
             return False
         for field in value_chain[:11]:
             try:
-                float(field)
+                value = float(field)
             except (ValueError, TypeError):
+                return False
+            if not math.isfinite(value):
                 return False
         return True
 
@@ -110,7 +121,9 @@ class Communication:
             self.ser.close()
             print(f"[Communication] Port {self.portName} closed.")
         else:
-            print(f"[Communication] Port {self.portName} is already closed or inactive.")
+            print(
+                f"[Communication] Port {self.portName} is already closed or inactive."
+            )
 
     def getData(self) -> list:
         """
@@ -123,7 +136,7 @@ class Communication:
         """
         if not self.dummyMode():
             try:
-                line = self.ser.readline()
+                line = self.ser.readline(2048)
                 decoded = line.decode("utf-8", errors="ignore").strip()
                 if decoded:
                     value_chain = [v.strip() for v in decoded.split(",")]
@@ -134,7 +147,9 @@ class Communication:
                     # instead of letting a bad field break the graphs.
                     if not self._warned_bad_frame:
                         self._warned_bad_frame = True
-                        print("[Communication] Skipping malformed frame (partial/boot line?).")
+                        print(
+                            "[Communication] Skipping malformed frame (partial/boot line?)."
+                        )
             except Exception as e:
                 print(f"[Communication] Error reading serial data: {e}")
             # Fallback for empty frame or error
@@ -150,8 +165,11 @@ class Communication:
 
         state = self._flight_state(elapsed_s)
 
-        # Barometric formula: pressure as a function of altitude.
-        pressure = 1013.25 * (1.0 - 2.25577e-5 * state["alt"]) ** 5.25588
+        # Barometric formula: pressure as a function of altitude. The base is
+        # clamped so extreme altitudes can never make the exponent produce a
+        # complex number (which would crash ``round()`` below).
+        base = max(0.0, 1.0 - 2.25577e-5 * state["alt"])
+        pressure = 1013.25 * base**5.25588
 
         # Standard atmospheric lapse rate: cooler the higher you go.
         temperature = 15.0 - 0.0065 * state["alt"]
@@ -203,7 +221,7 @@ class Communication:
             str(round(state["alt"], 1)),
             str(state["free_fall"]),
             str(round(temperature + random.uniform(-0.5, 0.5), 1)),
-            str(round(pressure + random.uniform(-0.4, 0.4), 1)),
+            str(round(max(0.0, pressure + random.uniform(-0.4, 0.4)), 1)),
             str(round(gyro_pitch, 2)),
             str(round(gyro_roll, 2)),
             str(round(gyro_yaw, 2)),
@@ -228,7 +246,11 @@ class Communication:
         elif t < _T_APOGEE:
             # Coasting up after burnout: ballistic, engines off, weightless.
             dt = t - T_THRUST
-            state["alt"] = 0.5 * THRUST_ACC * T_THRUST**2 + _BURNOUT_V * dt - 0.5 * GRAVITY * dt * dt
+            state["alt"] = (
+                0.5 * THRUST_ACC * T_THRUST**2
+                + _BURNOUT_V * dt
+                - 0.5 * GRAVITY * dt * dt
+            )
             state["accel_z"] = 0.0
             state["free_fall"] = 1
         elif t < _T_CHUTE:

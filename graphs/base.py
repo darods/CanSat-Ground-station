@@ -108,6 +108,16 @@ class ScrollingPlot(pg.PlotItem):
         trace stays frozen under the cursor; on release it jumps back to the
         current position automatically.
         """
+        if len(values) != self._buffer.shape[1]:
+            raise ValueError(
+                f"{type(self).__name__} expects {self._buffer.shape[1]} values "
+                f"per sample, got {len(values)}"
+            )
+        if not all(np.isfinite(values)):
+            # Reject nan/inf samples: a non-finite value would corrupt the
+            # trace and could break pyqtgraph auto-ranging (and, for the speed
+            # panel, the integrator would never recover).
+            return
         if self.paused:
             return
         self._buffer[:-1] = self._buffer[1:]

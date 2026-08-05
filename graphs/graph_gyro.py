@@ -5,6 +5,8 @@ read from telemetry frame indices 5-7, using the shared :class:`ScrollingPlot`
 base.
 """
 
+from contextlib import suppress
+
 from graphs.base import ScrollingPlot
 
 
@@ -21,7 +23,5 @@ class graph_gyro(ScrollingPlot):
 
     def update(self, pitch, roll, yaw):
         """Push the latest gyroscope sample (pitch, roll, yaw) onto the traces."""
-        try:
+        with suppress(ValueError, TypeError):
             self._push(float(pitch), float(roll), float(yaw))
-        except (ValueError, TypeError):
-            pass

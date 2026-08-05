@@ -3,9 +3,24 @@ Data Logging Module for CanSat Ground Station.
 Handles CSV persistence with UTF-8 encoding and cross-platform file safety.
 """
 
-import time
 import csv
+import time
 from pathlib import Path
+
+# Spreadsheets execute cells that start with these characters as formulas
+# (CSV formula injection). Telemetry is numeric, so a field beginning with
+# them is always suspicious; prefixing a leading apostrophe forces text mode
+# in Excel/Sheets. "-" is intentionally excluded because negative numbers are
+# legitimate and stay numeric.
+_FORMULA_PREFIXES = ("=", "+", "@")
+
+
+def _neutralize_formula(value) -> str:
+    """Return *value* with any spreadsheet-formula prefix neutralised."""
+    stripped = str(value).lstrip()
+    if stripped.startswith(_FORMULA_PREFIXES):
+        return "'" + stripped
+    return value
 
 
 class DataBase:
@@ -18,7 +33,9 @@ class DataBase:
     def guardar(self, data: list):
         """Append telemetry row with current timestamp if storage is active."""
         if self.state and data:
-            row = list(data) + [time.strftime("%Y-%m-%d %H:%M:%S")]
+            row = [_neutralize_formula(v) for v in data] + [
+                time.strftime("%Y-%m-%d %H:%M:%S")
+            ]
             try:
                 with open(self.filepath, "a", newline="", encoding="utf-8") as f:
                     writer = csv.writer(f, delimiter=",")
