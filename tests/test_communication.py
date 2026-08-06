@@ -20,8 +20,14 @@ import time
 
 import pytest
 
-import communication as comm_module
-from communication import Communication
+from communication import (
+    _H_APOGEE,
+    _H_CHUTE,
+    _T_APOGEE,
+    _T_CHUTE,
+    _T_LAND,
+    Communication,
+)
 
 # Frame indexes (must match the schema documented in README.md).
 (
@@ -119,26 +125,26 @@ def test_coast_phase_is_weightless(comm):
 
 
 def test_apogee_height_and_time(comm):
-    state = comm._flight_state(comm_module._T_APOGEE)
-    assert state["alt"] == pytest.approx(comm_module._H_APOGEE, rel=1e-3)
+    state = comm._flight_state(_T_APOGEE)
+    assert state["alt"] == pytest.approx(_H_APOGEE, rel=1e-3)
 
 
 def test_ballistic_descent_is_free_fall(comm):
-    state = comm._flight_state(comm_module._T_APOGEE + 5.0)
+    state = comm._flight_state(_T_APOGEE + 5.0)
     assert state["free_fall"] == 1
     assert state["accel_z"] == pytest.approx(0.0, abs=1e-6)
 
 
 def test_parachute_phase(comm):
-    state = comm._flight_state(comm_module._T_CHUTE + 5.0)
+    state = comm._flight_state(_T_CHUTE + 5.0)
     assert state["free_fall"] == 0
     # Under the parachute drag reduces the specific force below 1 g.
     assert state["accel_z"] == pytest.approx(9.81 - 1.3, rel=1e-3)
-    assert 0.0 < state["alt"] < comm_module._H_CHUTE
+    assert 0.0 < state["alt"] < _H_CHUTE
 
 
 def test_landed_phase(comm):
-    state = comm._flight_state(comm_module._T_LAND + 10.0)
+    state = comm._flight_state(_T_LAND + 10.0)
     assert state["alt"] == 0.0
     assert state["accel_z"] == pytest.approx(9.81, rel=1e-3)
     assert state["free_fall"] == 0
@@ -154,13 +160,13 @@ def test_altitude_never_negative(comm):
 # --------------------------------------------------------------------------- #
 def test_pressure_decreases_with_altitude(comm):
     low = float(frame_at(comm, 2.0)[I_PRESS])  # near the pad
-    high = float(frame_at(comm, comm_module._T_APOGEE)[I_PRESS])
+    high = float(frame_at(comm, _T_APOGEE)[I_PRESS])
     assert low > high
 
 
 def test_temperature_decreases_with_altitude(comm):
     low = float(frame_at(comm, 2.0)[I_TEMP])
-    high = float(frame_at(comm, comm_module._T_APOGEE)[I_TEMP])
+    high = float(frame_at(comm, _T_APOGEE)[I_TEMP])
     assert low > high
 
 

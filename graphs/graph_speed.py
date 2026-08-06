@@ -56,4 +56,4 @@ class graph_speed(ScrollingPlot):
             speed = math.sqrt(self.vx**2 + self.vy**2 + self.vz**2)
             self._push(speed)
         except (ValueError, TypeError):
-            pass
+            return
