@@ -24,4 +24,4 @@ class graph_time(TextPlot):
                 return
             self.set_text(f"{minutes:.2f}")
         except (ValueError, TypeError):
-            pass
+            return

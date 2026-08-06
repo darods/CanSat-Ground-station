@@ -30,4 +30,4 @@ class graph_battery(TextPlot):
                 return
             self.set_text(f"{charge:.0f}%")
         except (ValueError, TypeError):
-            pass
+            return
